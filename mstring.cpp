@@ -61,23 +61,31 @@ int MString::size() const {
     return strlen(d->str);
 }
 
+/**
+  Returns the length of this string
+  @returns the length of the sequence of characters represented by this object.
+  */
 int MString::length() const {
     return strlen(d->str);
 }
 
+/**
+  Assigns other to this string and returns a reference to this string.
+  */
 MString& MString::operator=(const MString& val) {
     d = val.d;
     return *this;
 }
 
+/**
+ Returns true if string other is equal to this string; otherwise returns false.
+  */
 bool MString::operator==(const MString& val) {
     return MString::equals(val);
 }
 
 /**
- * 
- * @param val
- * @return 
+ * Appends the string other onto the end of this string and returns a reference to this string.
  */
 MString& MString::operator +=(const MString& val) {
     detach();
@@ -89,23 +97,36 @@ MString& MString::operator +=(const MString& val) {
     d->str = buffer;
     return *this;
 }
-
+/**
+    Compares this string to the specified object.
+    The result is true if and only if the argument is not null and is a String object
+    that represents the same sequence of characters as this object.
+    @param val anObject - the object to compare this String against.
+    @return true if the String are equal; false otherwise.
+*/
 bool MString::equals(const MString& val) const {
     if (strcmp(d->str, val.d->str) == 0) {
         return true;
     }
     return false;
 }
-
+/**
+    Compares this String to another String, ignoring case considerations.
+    @param val the String to compare this String against.
+    @return true if the argument is not null and the Strings are equal, ignoring case; false otherwise.
+*/
 bool MString::equalsIgnoreCase(const MString& val) const
 {
-
     if (toLowerCase().equals(val.toLowerCase())) {
         return true;
     }
     return false;
 }
 
+/**
+  Converts all of the characters in this String to lower case using the rules of the default locale.
+  @return the String, converted to lowercase.
+  */
 MString MString::toLowerCase() const
 {
     char *tmp = new char[strlen(d->str)];
@@ -119,6 +140,10 @@ MString MString::toLowerCase() const
     return result;
 }
 
+/**
+  Converts all of the characters in this String to upper case using the rules of the default locale.
+  @return the String, converted to uppercase.
+  */
 MString MString::toUpperCase() const
 {
     char *tmp = new char[strlen(d->str)];
@@ -132,6 +157,14 @@ MString MString::toUpperCase() const
     return result;
 }
 
+/**
+  Returns a new string that is a substring of this string.
+  The substring begins at the specified beginIndex and extends to the character at index endIndex - 1.
+  Thus the length of the substring is endIndex-beginIndex.
+  @param begin the beginning index, inclusive.
+  @param end the ending index, exclusive.
+  @return the specified substring.
+  */
 MString MString::substring(int begin, int count)
 {
     if (d->str == 0 || strlen(d->str) == 0 || strlen(d->str) < begin)
@@ -146,6 +179,12 @@ MString MString::substring(int begin, int count)
     return result;
 }
 
+/**
+  Returns a new string resulting from replacing all occurrences of oldChar in this string with newChar.
+  @param str1 the old character.
+  @param str2 the new character.
+  @returns a string derived from this string by replacing every occurrence of oldChar with newChar.
+  */
 MString MString::replace(const MString& str1, const MString& str2)
 {
     char *ret;
@@ -189,6 +228,11 @@ MString MString::replace(const MString& str1, const MString& str2)
     return result;
 }
 
+/**
+  Returns the index within this string of the first occurrence of the specified character.
+  @param val a string to found
+  @returns the index of the first occurrence of the character in the character sequence represented by this object, or -1 if the character does not occur.
+  */
 int MString::indexOf(const MString& val) const
 {
     int i;
@@ -197,8 +241,15 @@ int MString::indexOf(const MString& val) const
             return i;
         }
     }
+
+    return -1;
 }
 
+/**
+  Tests if this string starts with the specified prefix.
+  @param val string to analyze
+  @returns true if the character sequence represented by the argument is a prefix of the character sequence represented by this string; false otherwise.
+*/
 bool MString::startsWith(const MString& val) const
 {
     if (strncmp(d->str, val.d->str, strlen(val.d->str)) == 0) {
@@ -207,7 +258,11 @@ bool MString::startsWith(const MString& val) const
     }
     return false;
 }
-
+/**
+  Tests if this string ends with the specified suffix.
+  @param val string to analyze
+  @returns true true if the character sequence represented by the argument is a suffix of the character sequence represented by this object; false otherwise.
+*/
 bool MString::endsWith(const MString& val) const
 {
     if (strncmp(&d->str[strlen((char*) d->str) - strlen(val.d->str)], val.d->str, strlen(val.d->str)) == 0) {
@@ -216,7 +271,10 @@ bool MString::endsWith(const MString& val) const
     return false;
 
 }
-
+/**
+  Returns true if, and only if, length() is 0.
+  @returns true if length() is 0, otherwise false
+*/
 bool MString::isEmpty() const
 {
     if (d->str == 0 || strlen(d->str) == 0) {
@@ -225,6 +283,11 @@ bool MString::isEmpty() const
     return false;
 }
 
+/**
+  Concatenates the specified string to the end of this string.
+  @param val he String that is concatenated to the end of this String.
+  @returns a string that represents the concatenation of this string.
+  */
 MString MString::concat(const MString& val)
 {
     int totalSize = strlen(d->str) + strlen(val.d->str);
@@ -236,6 +299,12 @@ MString MString::concat(const MString& val)
     return result;
 }
 
+/**
+  Returns true if and only if this string contains the specified sequence of char values.
+
+  @param the sequence to search for
+  @returns true if this string contains s, false otherwise
+*/
 bool MString::contains(const MString& val) const
 {
     int i = 0;
