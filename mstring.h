@@ -14,43 +14,49 @@
 #include <iostream>
 #include <ostream>
 
+#include "msharedptr.h"
+
+#include "macros_p.h"
 
 class MString{
-	
+
+public: 
+    MString(const char *);
+    MString(const MString &);
+    MString();
+    ~MString();
+
+    void print( std::ostream& os ) const;
+    void clear();
+    int size() const;
+    int length() const;
+
+    //Operator
+    MString& operator=(const MString&);
+    MString& operator+=(const MString&);
+    bool operator==(const MString&);
+
+
+    bool equals(const MString&) const;
+    bool equalsIgnoreCase(const MString&) const;
+    bool isEmpty() const;
+    bool startsWith(const MString&) const;
+    bool endsWith(const MString&) const;
+    bool contains (const MString&) const;
+
+    int indexOf(const MString&) const;
+
+    MString concat(const MString&);
+    MString substring(int begin,int end);
+    MString replace(const MString&,const MString&);
+    MString toLowerCase() const;
+    MString toUpperCase() const;
+
+protected:
+    void detach();
+
 private:
-	const char* m_str;
-public:
-    
-        MString(const char *);
-        MString(const MString &);
-	MString();
-	~MString();
-	
-	void print( std::ostream& os ) const;
-        void clear();
-	int size() const;
-        int length() const;
-        
-        //Operator
-        MString& operator=(const MString&);
-	MString& operator+=(const MString&);     
-        bool operator==(const MString&);   
-        
-        
-        bool equals(const MString&);
-        bool equalsIgnoreCase(const MString&);      
-        bool isEmpty() const;
-        bool startsWith(const MString&) const;
-        bool endsWith(const MString&) const;
-        bool contains (const MString&) const;
-        
-        int indexOf(const MString&) const;
-        
-        MString concat(const MString&);
-        MString substring(int begin,int end);
-        MString replace(const MString&,const MString&);
-        MString toLowerCase();
-        MString toUpperCase();	
+    M_SHARED_D_POINTER
 };
 
 std::ostream& operator<<( std::ostream&, const MString&);
