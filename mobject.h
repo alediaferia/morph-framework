@@ -24,16 +24,17 @@ public:
     M_OBJECT(MObject)
     M_PROPERTY(MObjectDelegate*, delegate)
     M_PROPERTY(const char*, id)
-    M_COMPLEX_PROPERTY(int, number, MObject)
-
+    //M_COMPLEX_PROPERTY(int, number, MObject)
 
     MObject(MObject *parent = 0);
     ~MObject();
     
-    int getNumber() const;
+    //int getNumber() const;
 
-    M_DECLARE_SLOT1(setNumber,int)
-    M_DECLARE_SLOT(testSlot)
+    //M_DECLARE_SLOT1(setNumber,int)
+    ///M_DECLARE_SLOT(testSlot)
+
+    M_DECLARE_SLOT(testSlot);
     
     template<typename T>
     void setProperty(int key, const T &t);
@@ -41,10 +42,16 @@ public:
     template<typename T>
     void registerProperty(int index, void* prop);
 
+    void connect(const char *signal, AbstractSlot *slot)
+    {
+        m_signals[signal] = slot;
+    }
+
+    M_SIGNAL(clicked)
+
 private:        
     int m_number;
     std::map<int, void*> m_propsMap;
-    std::map<const char*, std::list<slot> > m_slots;
 };
 
 template<typename T>

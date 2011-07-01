@@ -7,11 +7,9 @@ int main(int argc, char **argv)
 
     MObject *o = new MObject();
 
-    M_INVOKE_SLOT(o, testSlot);
+    o->connect("clicked", M_SLOT(o, testSlot));
 
-    M_INVOKE_SLOT1(o, setNumber, 48);
-
-    std::cout << o->getNumber() << std::endl;
+    o->clicked();
 
     delete o;
 

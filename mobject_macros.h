@@ -3,11 +3,38 @@
 
 // public utility macros
 
+#include <vector>
+#include <utility>
+
+class AbstractSlot {
+public:
+    virtual void invoke() = 0;
+};
+
+template<typename C, typename T>
+class Slot : public AbstractSlot {
+public:
+    Slot(C* o, T f, const char *name) :
+        o(o),
+        f(f)
+    {
+    }
+
+    void invoke()
+    {
+        (o->*f)();
+    }
+
+private:
+    C* o;
+    T f;
+};
+
 #define M_PROPERTY(type, name) \
     public: \
     MProperty<type> name;
 
-#define M_SYNTHETIZE_PROPERTY(name) name()
+#define M_SYNTHETIZE_PROPERTY(p) p()
 
 #define M_COMPLEX_PROPERTY(type, name, _class) \
     public: \
@@ -21,36 +48,28 @@
     struct PropTypeHelper { \
         typedef MProperty<X> _name::*typed_prop_member; \
     }; \
-    typedef void (_name::*slot)(); \
-    typedef void (_name::*slot1)(void*); \
-    typedef void (_name::*slot2)(void*, void*);
+    typedef void (_name::*SlotPtr)(); \
+    typedef Slot<_name, SlotPtr> ClassSlot; \
+    private: \
+    std::map<const char*, AbstractSlot*> m_signals;
 
-#define M_DECLARE_SLOT(_name) \
-    void _name(); \
-    slot _name##_slot;
-
-#define M_DECLARE_SLOT1(_name, arg) \
-    void _name(arg); \
-    slot1 _name##_slot;
-
-#define M_REGISTER_SLOT(_class, _name) \
-    _name##_slot(&_class::_name)
-
-#define M_REGISTER_SLOT1(_class, _name) \
-    _name##_slot(reinterpret_cast< _class::slot1 >(&_class::_name))
-
-#define M_INVOKE_SLOT(object, name) \
-    (object->*(object->name##_slot))()
-
-#define M_INVOKE_SLOT1(object, name, arg) \
-    (object->*(object->name##_slot))((void*)arg)
-
-#define M_SIGNAL(_name) \
-    void _name() { \
-        std::list<slot> _slots = m_slots[_name]; \
-        for (int i = 0; i < _slots.size(); i++) { \
-            (this->*(_slots[i]))(); \
+#define M_SIGNAL(name) \
+    void name() { \
+        std::map<const char*, AbstractSlot*>::const_iterator it = m_signals.find(#name); \
+        if (it != m_signals.end()) { \
+            it->second->invoke(); \
         } \
     }
+
+#define M_DECLARE_SLOT(name) \
+    void name(); \
+    ClassSlot name##_slot;
+
+#define M_REGISTER_SLOT(_class, name) \
+    name##_slot(this, &_class::name, #name)
+
+#define M_SLOT(object, name) \
+    (AbstractSlot*)&object->name##_slot
+
 
 #endif // MOBJECT_MACROS_H
