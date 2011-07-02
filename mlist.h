@@ -24,7 +24,6 @@ public:
     MList() { head = tail = NULL; }
     MList( const MList &source );
     ~MList();
-    const MList &operator=( const MList &right );
     void appendToFirst( const T &item );
     void appendToLast( const T &item );
     void removeFirst();
@@ -32,11 +31,28 @@ public:
     bool isEmpty()const { return head == NULL; }
     void print( ostream &out ) const;
     int size() const;
+    void clear();
+    T get(int i) const;
 
 private:
     void free();
     nodeClass<T> *head, *tail;
 };
+
+template<class T>
+ T MList<T>::get(int i) const{
+    int index = 0;
+    nodeClass<T> *ptr = head;
+    while ( ptr != NULL )
+    {
+        if(i==index){
+            return ptr->data;
+        }
+        ptr = ptr -> next;
+        index++;
+    }
+}
+
 
 template<class T>
 int MList<T>::size() const{
@@ -54,19 +70,6 @@ int MList<T>::size() const{
 template <class T>
 std::ostream& operator<<( std::ostream&, const MList<T>&);
 
-template <class T>
-const MList<T>& MList<T>::operator= ( const MList &right )
-{
-    if ( this == &right ) { return *this; }
-    free();
-    nodeClass<T> *ptr = right.head;
-    while ( ptr != NULL )
-    {
-        addItemInOrder( ptr -> data );
-        ptr = ptr -> next;
-    }
-    return *this;
-}
 
 template <class T>
 MList<T>::MList( const MList &source )
@@ -110,25 +113,30 @@ void MList<T>::appendToLast( const T &item )
 template <class T>
 void MList<T>::removeFirst()
 {
-    if ( isEmpty() ) { cerr<<"empty list\n"; exit(41); }
-    nodeClass<T> *ptr = head;
-    head = head -> next;
-    delete ptr;
-    if ( head == NULL ) { tail = NULL; }
+    if (!isEmpty() ) {
+        nodeClass<T> *ptr = head;
+        head = head -> next;
+        delete ptr;
+        if ( head == NULL )
+        {
+            tail = NULL;
+        }
+    }
 }
 
 template <class T>
 void MList<T>::removeLast()
 {
-    if ( isEmpty() ) { cerr<<"empty list\n"; exit(41); }
-    if ( head == tail ) { removeFirst(); }
-    else
-    {
-        nodeClass<T> *ptr = head;
-        while ( ptr -> next -> next != NULL) { ptr = ptr -> next; }
-        delete tail;
-        tail = ptr;
-        tail -> next = NULL;
+    if ( isEmpty() ) {
+        if ( head == tail ) { removeFirst(); }
+        else
+        {
+            nodeClass<T> *ptr = head;
+            while ( ptr -> next -> next != NULL) { ptr = ptr -> next; }
+            delete tail;
+            tail = ptr;
+            tail -> next = NULL;
+        }
     }
 }
 
@@ -136,6 +144,13 @@ template <class T>
 void MList<T>::free()
 {
     while ( !isEmpty() ) { removeFirst(); }
+}
+
+
+template <class T>
+void MList<T>::clear()
+{
+  free();
 }
 
 template <class T>
