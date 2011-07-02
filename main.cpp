@@ -1,17 +1,20 @@
-#include "mobject.h"
 #include <iostream>
+#include "mlist.h"
+#include "mstring.h"
 
 
 int main(int argc, char **argv)
 {
 
-    MObject *o = new MObject();
+    MString s;
+    s="Ciao";
+    MList<MString> list;
 
-    o->connect("clicked", M_SLOT(o, testSlot));
+    list.appendToLast("one");
+    list.appendToLast("two");
+    list.appendToLast("three");
 
-    o->clicked();
 
-    delete o;
-
+    std::cout<<list.get(0);
     return 0;
 }
