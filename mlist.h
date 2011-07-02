@@ -37,7 +37,8 @@ public:
 
 private:
     void free();
-    nodeClass<T> *head, *tail;
+    nodeClass<T> *head;
+    nodeClass<T> *tail;
 };
 
 template<class T>
@@ -57,12 +58,14 @@ template<class T>
  template <class T>
  const MList<T>& MList<T>::operator= ( const MList &right )
  {
-     if ( this == &right ) { return *this; }
+     if ( this == &right ) {
+         return *this;
+     }
      free();
      nodeClass<T> *ptr = right.head;
      while ( ptr != NULL )
      {
-        appendToFirst( ptr -> data);
+         appendToFirst( ptr -> data);
          ptr = ptr -> next;
      }
      return *this;
@@ -86,7 +89,6 @@ int MList<T>::size() const{
 template <class T>
 std::ostream& operator<<( std::ostream&, const MList<T>&);
 
-
 template <class T>
 MList<T>::MList( const MList &source )
 {
@@ -109,7 +111,6 @@ void MList<T>::appendToFirst( const T &item )
     ptr->next = head;
     head = ptr;
     if ( tail == NULL ) { tail = ptr; }
-
 }
 
 template <class T>
