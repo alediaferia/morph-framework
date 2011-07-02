@@ -6,6 +6,7 @@ main.cpp
 mobjectwatcher.cpp
 mvariable.cpp
 mstring.cpp
+mlist.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})
