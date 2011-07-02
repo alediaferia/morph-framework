@@ -24,6 +24,7 @@ public:
     MList() { head = tail = NULL; }
     MList( const MList &source );
     ~MList();
+     const MList &operator=( const MList &right );
     void appendToFirst( const T &item );
     void appendToLast( const T &item );
     void removeFirst();
@@ -52,6 +53,21 @@ template<class T>
         index++;
     }
 }
+
+ template <class T>
+ const MList<T>& MList<T>::operator= ( const MList &right )
+ {
+     if ( this == &right ) { return *this; }
+     free();
+     nodeClass<T> *ptr = right.head;
+     while ( ptr != NULL )
+     {
+        appendToFirst( ptr -> data);
+         ptr = ptr -> next;
+     }
+     return *this;
+ }
+
 
 
 template<class T>
