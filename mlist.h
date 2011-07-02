@@ -23,22 +23,36 @@ class MList
 public:
     MList() { head = tail = NULL; }
     MList( const MList &source );
-    ~MList();  //Destructor
+    ~MList();
     const MList &operator=( const MList &right );
-    void addItemToHead( const T &item );
-    void addItemToTail( const T &item );
+    void appendToFirst( const T &item );
+    void appendToLast( const T &item );
     void removeFirst();
     void removeLast();
-    bool isFull()const { return false; }
     bool isEmpty()const { return head == NULL; }
     void print( ostream &out ) const;
-    void addItemInOrder( T &item );
+    int size() const;
 
 private:
     void free();
     nodeClass<T> *head, *tail;
-    int count;
 };
+
+template<class T>
+int MList<T>::size() const{
+    int index = 0;
+    nodeClass<T> *ptr = head;
+    while ( ptr != NULL )
+    {
+        ptr = ptr -> next;
+        index++;
+    }
+
+    return index;
+}
+
+template <class T>
+std::ostream& operator<<( std::ostream&, const MList<T>&);
 
 template <class T>
 const MList<T>& MList<T>::operator= ( const MList &right )
@@ -66,26 +80,25 @@ template <class T>
 MList<T>::~MList()
 {
     free();
-    count=0;
 }
 
 template <class T>
-void MList<T>::addItemToHead( const T &item )
+void MList<T>::appendToFirst( const T &item )
 {
     nodeClass<T> *ptr = new nodeClass<T>;
     ptr->data = item;
     ptr->next = head;
     head = ptr;
     if ( tail == NULL ) { tail = ptr; }
-    count++;
+
 }
 
 template <class T>
-void MList<T>::addItemToTail( const T &item )
+void MList<T>::appendToLast( const T &item )
 {
     if ( isEmpty() )
     {
-        addItemToHead( item );
+        appendToFirst( item );
         return;
     }
     nodeClass<T> *ptr = new nodeClass<T>;
@@ -125,7 +138,6 @@ void MList<T>::free()
     while ( !isEmpty() ) { removeFirst(); }
 }
 
-
 template <class T>
 void MList<T>::print( ostream &out )const
 {
@@ -138,4 +150,11 @@ void MList<T>::print( ostream &out )const
         i++;
     }
 }
+
+template <class T>
+std::ostream& operator<<(std::ostream& os, const MList<T>& list) {
+    list.print(os);
+    return os;
+}
+
 
