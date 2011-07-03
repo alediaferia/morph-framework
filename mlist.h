@@ -11,7 +11,9 @@ class nodeClass
 {
 public:
     template<class> friend class MList;
-    nodeClass() { next = NULL; }
+    nodeClass() {
+        next = 0;
+    }
 private:
     T data;
     nodeClass *next;
@@ -21,7 +23,7 @@ template <class T>
 class MList
 {
 public:
-    MList() { head = tail = NULL; }
+    MList() { head = tail = 0; }
     MList( const MList &source );
     ~MList();
      const MList &operator=( const MList &right );
@@ -29,7 +31,7 @@ public:
     void appendToLast( const T &item );
     void removeFirst();
     void removeLast();
-    bool isEmpty()const { return head == NULL; }
+    bool isEmpty()const { return head == 0; }
     void print( ostream &out ) const;
     int size() const;
     void clear();
@@ -45,8 +47,7 @@ template<class T>
  T MList<T>::get(int i) const{
     int index = 0;
     nodeClass<T> *ptr = head;
-    while ( ptr != NULL )
-    {
+    while ( ptr != 0 ){
         if(i==index){
             return ptr->data;
         }
@@ -63,26 +64,22 @@ template<class T>
      }
      free();
      nodeClass<T> *ptr = right.head;
-     while ( ptr != NULL )
-     {
+     while ( ptr != 0 ) {
          appendToFirst( ptr -> data);
          ptr = ptr -> next;
      }
      return *this;
  }
 
-
-
 template<class T>
-int MList<T>::size() const{
+int MList<T>::size() const
+{
     int index = 0;
     nodeClass<T> *ptr = head;
-    while ( ptr != NULL )
-    {
+    while ( ptr != 0 ){
         ptr = ptr -> next;
         index++;
     }
-
     return index;
 }
 
@@ -92,7 +89,7 @@ std::ostream& operator<<( std::ostream&, const MList<T>&);
 template <class T>
 MList<T>::MList( const MList &source )
 {
-    head = tail = NULL;
+    head = tail = 0;
     *this = source;
 }
 
@@ -110,14 +107,13 @@ void MList<T>::appendToFirst( const T &item )
     ptr->data = item;
     ptr->next = head;
     head = ptr;
-    if ( tail == NULL ) { tail = ptr; }
+    if ( tail == 0 ) { tail = ptr; }
 }
 
 template <class T>
 void MList<T>::appendToLast( const T &item )
 {
-    if ( isEmpty() )
-    {
+    if ( isEmpty()){
         appendToFirst( item );
         return;
     }
@@ -134,9 +130,8 @@ void MList<T>::removeFirst()
         nodeClass<T> *ptr = head;
         head = head -> next;
         delete ptr;
-        if ( head == NULL )
-        {
-            tail = NULL;
+        if ( head == 0 ){
+            tail = 0;
         }
     }
 }
@@ -145,14 +140,16 @@ template <class T>
 void MList<T>::removeLast()
 {
     if ( isEmpty() ) {
-        if ( head == tail ) { removeFirst(); }
-        else
-        {
+        if ( head == tail ) {
+            removeFirst();
+        }else{
             nodeClass<T> *ptr = head;
-            while ( ptr -> next -> next != NULL) { ptr = ptr -> next; }
+            while ( ptr -> next -> next != 0) {
+                ptr = ptr -> next;
+            }
             delete tail;
             tail = ptr;
-            tail -> next = NULL;
+            tail -> next = 0;
         }
     }
 }
@@ -175,8 +172,7 @@ void MList<T>::print( ostream &out )const
 {
     int i = 0;
     nodeClass<T> *ptr = head;
-    while ( ptr != NULL )
-    {
+    while ( ptr != 0 ){
         out << ptr -> data << endl;
         ptr = ptr -> next;
         i++;
