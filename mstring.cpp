@@ -32,6 +32,16 @@ public:
 
 };
 
+const char* MString::data() {
+    char *tmp = new char[strlen(d->str)];
+    int i;
+    for (i = 0; i < strlen(d->str); i++) {
+        tmp[i] = (d->str[i]);
+    }
+
+    return tmp;
+}
+
 MString::MString(const char *str_array) :
     d(MSharedPtr<Private>(new Private(this)))
 {

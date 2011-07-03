@@ -43,7 +43,7 @@ public:
     bool startsWith(const MString&) const;
     bool endsWith(const MString&) const;
     bool contains (const MString&) const;
-
+    const char *data() ;
     int indexOf(const MString&) const;
 
     MString concat(const MString&);
