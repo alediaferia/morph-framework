@@ -1,13 +1,13 @@
 #include <iostream>
 
-template <class T>
+template <typename T>
 class MList;
 
-template <class T>
+template <typename T>
 class nodeClass
 {
 public:
-    template<class> friend class MList;
+    template<typename> friend class MList;
     nodeClass() {
         next = 0;
     }
@@ -16,7 +16,7 @@ private:
     nodeClass *next;
 };
 
-template <class T>
+template <typename T>
 class MList
 {
 public:
@@ -42,7 +42,7 @@ private:
     nodeClass<T> *tail;
 };
 
-template<class T>
+template<typename T>
 void MList<T>::sort() {
     nodeClass<T> *ptr1;
     nodeClass<T> *ptr2;
@@ -96,7 +96,7 @@ void MList<T>::sort() {
     }
 }
 
-template<class T>
+template<typename T>
 void MList<T>::removeAll(T ele){
     nodeClass<T>*prec;
     nodeClass<T>*ptr;
@@ -124,7 +124,7 @@ void MList<T>::removeAll(T ele){
     }
 }
 
-template<class T>
+template<typename T>
 void MList<T>::remove(T ele){
     nodeClass<T>*prec;
     nodeClass<T>*ptr;
@@ -153,7 +153,7 @@ void MList<T>::remove(T ele){
     }
 }
 
-template<class T>
+template<typename T>
 T MList<T>::get(int i) const{
     int index = 0;
     nodeClass<T> *ptr = head;
@@ -166,7 +166,7 @@ T MList<T>::get(int i) const{
     }
 }
 
-template <class T>
+template <typename T>
 const MList<T>& MList<T>::operator= ( const MList &right )
 {
     if ( this == &right ) {
@@ -181,7 +181,7 @@ const MList<T>& MList<T>::operator= ( const MList &right )
     return *this;
 }
 
-template<class T>
+template<typename T>
 int MList<T>::size() const
 {
     int index = 0;
@@ -204,13 +204,13 @@ MList<T>::MList( const MList &source )
 }
 
 
-template <class T>
+template <typename T>
 MList<T>::~MList()
 {
     free();
 }
 
-template <class T>
+template <typename T>
 void MList<T>::insert(int i, const T &item )
 {
     if(i>=this->size()){
@@ -233,7 +233,7 @@ void MList<T>::insert(int i, const T &item )
     }
 }
 
-template <class T>
+template <typename T>
 void MList<T>::append( const T &item )
 {
     if (isEmpty()){
@@ -250,7 +250,7 @@ void MList<T>::append( const T &item )
     tail = ptr;
 }
 
-template <class T>
+template <typename T>
 void MList<T>::removeFirst()
 {
     if (!isEmpty() ) {
@@ -263,7 +263,7 @@ void MList<T>::removeFirst()
     }
 }
 
-template <class T>
+template <typename T>
 void MList<T>::removeLast()
 {
     if (!isEmpty() ) {
@@ -281,20 +281,20 @@ void MList<T>::removeLast()
     }
 }
 
-template <class T>
+template <typename T>
 void MList<T>::free()
 {
     while ( !isEmpty() ) { removeFirst(); }
 }
 
 
-template <class T>
+template <typename T>
 void MList<T>::clear()
 {
     free();
 }
 
-template <class T>
+template <typename T>
 void MList<T>::print( std::ostream &out )const
 {
     int i = 0;
@@ -306,7 +306,7 @@ void MList<T>::print( std::ostream &out )const
     }
 }
 
-template <class T>
+template <typename T>
 std::ostream& operator<<(std::ostream& os, const MList<T>& list) {
     list.print(os);
     return os;
