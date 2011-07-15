@@ -71,5 +71,4 @@ private:
 #define M_SLOT(object, name) \
     (AbstractSlot*)&object->name##_slot
 
-
 #endif // MOBJECT_MACROS_H

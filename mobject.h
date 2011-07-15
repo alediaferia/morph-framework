@@ -24,20 +24,12 @@ public:
     M_OBJECT(MObject)
     M_PROPERTY(MObjectDelegate*, delegate)
     M_PROPERTY(const char*, id)
-    //M_COMPLEX_PROPERTY(int, number, MObject)
+    M_PROPERTY(int, number)
 
     MObject(MObject *parent = 0);
     ~MObject();
     
-    //int getNumber() const;
-
-    //M_DECLARE_SLOT1(setNumber,int)
-    ///M_DECLARE_SLOT(testSlot)
-
     M_DECLARE_SLOT(testSlot);
-    
-    template<typename T>
-    void setProperty(int key, const T &t);
     
     template<typename T>
     void registerProperty(int index, void* prop);
@@ -49,30 +41,21 @@ public:
 
     M_SIGNAL(clicked)
 
-private:        
-    int m_number;
-    std::map<int, void*> m_propsMap;
+    void setPropertyValue(int index, const MVariable &v);
+    MVariable getPropertyValue(int index) const;
+
+protected:
+    virtual void propertiesRegistration();
+
+private:
+    class Private;
+    Private* const d;
 };
-
-template<typename T>
-void MObject::setProperty(int key, const T& t)
-
-{
-    std::map<int, void*>::iterator it = m_propsMap.find(key);
-    if (it == m_propsMap.end()) {
-        std::cout << "unable to find property with key " << key << std::endl;
-        return;
-    }
-
-    MProperty<T> MObject::*prop = it->second;
-    std::cout << "setting value for property " << prop << std::endl;
-    ((*this).*prop)(t);
-}
 
 template<typename T>
 void MObject::registerProperty(int index, void* prop)
 {
-     m_propsMap.insert(std::pair<int, void* >(index, prop));
+     //m_propsMap.insert(std::pair<int, void* >(index, prop));
 }
 
 class MObjectDelegate {

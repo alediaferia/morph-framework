@@ -1,6 +1,8 @@
 #ifndef MPROPERTY_H
 #define MPROPERTY_H
 
+#include "mvariable.h"
+
 // prototypes
 
 template<typename T>
@@ -16,10 +18,22 @@ template<typename T, typename C> class MPropertyCSG;
 
 
 // implementations
+class BaseProperty {
+public:
+    virtual MVariable& operator=(const MVariable& copy) = 0;
+
+    virtual void setValue(const MVariable &v) = 0;
+    virtual MVariable value() const = 0;
+
+    BaseProperty* ptr()
+    {
+        return this;
+    }
+};
 
 
 template <typename T>
-class MProperty {
+class MProperty : public BaseProperty {
 public:
     MProperty()
     {
@@ -30,6 +44,17 @@ public:
 
     virtual ~MProperty()
     {
+    }
+
+    virtual void setValue(const MVariable &v)
+    {
+        _variableProxy = v;
+        _value = v.value<T>();
+    }
+
+    virtual MVariable value() const
+    {
+        return _value;
     }
 
     virtual T& operator=(const T& source)
@@ -64,7 +89,17 @@ public:
         _value--;
         return _value;
     }
-    
+
+    virtual MVariable& operator=(const MVariable& variable)
+    {
+        _value = variable.value<T>();
+        _variableProxy = MVariable(T());
+        return _variableProxy;
+    }
+
+private:
+    MVariable _variableProxy;
+
 protected:
     T _value;
 };

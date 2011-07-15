@@ -18,6 +18,7 @@ MVariable::MVariable(const char *data) :
 MVariable::MVariable(int data) :
     d(MSharedPtr<PrivateVariable>(new PrivateVariable(this)))
 {
+    std::cout << "int ctor" << std::endl;
     d->initWithData<int>((void*)&data);
 }
 

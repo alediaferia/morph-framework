@@ -97,7 +97,7 @@ private:
         template <typename T>
         void initWithData(void *data)
         {
-            if (m->store<unsigned char>((void*)&data, MType<unsigned char>::typeId())) {
+            if (m->store<T>(data, MType<T>::typeId())) {
                 empty = false;
                 valid = true;
             }
@@ -151,9 +151,6 @@ void MVariable::setValue(const T &t)
 template<typename T>
 bool MVariable::store(void* data, unsigned int typeId)
 {
-    // use delete instead
-    // after getting right
-    // data type
     delete (T*)d->data;
 
     d->data = new T();
@@ -166,7 +163,7 @@ bool MVariable::store(void* data, unsigned int typeId)
     *tmp = *((T*)data);
 
     d->type = (MVariable::Type)typeId;
-
+    std::cout << "Data type: " << d->type << std::endl;
     return true;
 }
 
