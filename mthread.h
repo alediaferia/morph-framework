@@ -8,13 +8,14 @@ public:
     ~MThread();
 
     void start();
+    void wait();
 
 protected:
     virtual void run();
 
 private:
     friend void* runThread(void*);
-    friend class Private;
+    class Private;
     Private * const d;
 };
 
