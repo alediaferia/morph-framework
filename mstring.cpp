@@ -32,6 +32,10 @@ public:
 
 };
 
+// TODO: bisogna chiarire nella documentazione
+// che questa funzione alloca nuova memoria
+// e che è responsabilità del chiamante
+// liberarla quando ha finito di usare l'array
 const char* MString::data() {
     char *tmp = new char[strlen(d->str)];
     int i;
@@ -353,7 +357,7 @@ void MString::clear()
 
 void MString::detach()
 {
-    std::cout << "detaching" << std::endl;
+    //std::cout << "detaching" << std::endl;
 
     char *data = new char[strlen(d->str)];
     strcpy(data, d->str);
