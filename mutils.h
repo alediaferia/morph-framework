@@ -1,10 +1,9 @@
 #ifndef MUTILS_H
 #define MUTILS_H
 
-bool mLittleEndian();
+//bool mLittleEndian();
 
-const char* mArrayToHex(const unsigned char* input, int length);
-int mHash(const char* message);
+//int mHash(const char* message);
 
 void mPrint(const char *message);
 

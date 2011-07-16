@@ -6,7 +6,6 @@
 
 #include "mstring.h"
 
-
 class MString::Private{
 
 public:
@@ -17,7 +16,7 @@ public:
 
     ~Private()
     {
-        std::cout << "freeing string data" << std::endl;
+        //std::cout << "freeing string data" << std::endl;
         delete[] str;
     }
 

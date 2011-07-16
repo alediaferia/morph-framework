@@ -48,27 +48,5 @@ private:
     struct PropTypeHelper { \
         typedef MProperty<X> _name::*typed_prop_member; \
     }; \
-    typedef void (_name::*SlotPtr)(); \
-    typedef Slot<_name, SlotPtr> ClassSlot; \
-    private: \
-    std::map<const char*, AbstractSlot*> m_signals;
-
-#define M_SIGNAL(name) \
-    void name() { \
-        std::map<const char*, AbstractSlot*>::const_iterator it = m_signals.find(#name); \
-        if (it != m_signals.end()) { \
-            it->second->invoke(); \
-        } \
-    }
-
-#define M_DECLARE_SLOT(name) \
-    void name(); \
-    ClassSlot name##_slot;
-
-#define M_REGISTER_SLOT(_class, name) \
-    name##_slot(this, &_class::name, #name)
-
-#define M_SLOT(object, name) \
-    (AbstractSlot*)&object->name##_slot
 
 #endif // MOBJECT_MACROS_H

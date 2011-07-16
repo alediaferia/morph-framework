@@ -23,7 +23,7 @@ void* runThread(void* mthread)
 {
     MThread *thread = static_cast<MThread*>(mthread);
 
-    // initializing waitg condition for wait method
+    // initializing waiting condition for wait method
     pthread_cond_init(&thread->d->waitCondition, 0);
     thread->run();
 

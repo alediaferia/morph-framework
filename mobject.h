@@ -28,35 +28,11 @@ public:
 
     MObject(MObject *parent = 0);
     ~MObject();
-    
-    M_DECLARE_SLOT(testSlot);
-    
-    template<typename T>
-    void registerProperty(int index, void* prop);
-
-    void connect(const char *signal, AbstractSlot *slot)
-    {
-        m_signals[signal] = slot;
-    }
-
-    M_SIGNAL(clicked)
-
-    void setPropertyValue(int index, const MVariable &v);
-    MVariable getPropertyValue(int index) const;
-
-protected:
-    virtual void propertiesRegistration();
 
 private:
     class Private;
     Private* const d;
 };
-
-template<typename T>
-void MObject::registerProperty(int index, void* prop)
-{
-     //m_propsMap.insert(std::pair<int, void* >(index, prop));
-}
 
 class MObjectDelegate {
 public:

@@ -3,7 +3,6 @@
  *  Untitled
  *
  *  Created by Davide Santangelo on 27/06/11.
- *  Copyright 2011 MissingTech s.r.l. All rights reserved.
  *
  */
 

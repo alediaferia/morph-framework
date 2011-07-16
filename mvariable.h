@@ -114,7 +114,7 @@ private:
 
 //// implementations
 
-// values natively supported by framework
+// values natively supported by the framework
 M_DECLARE_INTERNAL_TYPE(char, MVariable::Char)
 M_DECLARE_INTERNAL_TYPE(int, MVariable::Int)
 M_DECLARE_INTERNAL_TYPE(unsigned int, MVariable::UnsignedInt)

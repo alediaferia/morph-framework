@@ -6,43 +6,13 @@
 
 MMutex mutils_print_mutex;
 
-const char* mArrayToHex(const char* input, int length)
-{
-    const int outputLength = length * 2 + 1;
-    unsigned char *string = new unsigned char[outputLength];
-
-    int j = 0;
-    for (int i = 0; i < length; i++) {
-
-        const unsigned int mostSignificant = input[i] >> 4;
-        const unsigned int leastSignificant = input[i] & 0x0000FFFF;
-
-        if (mostSignificant < 10) {
-            string[j] = mostSignificant + 0x00000030;
-        } else {
-            string[j] = mostSignificant + 0x00000057;
-        }
-
-        if (leastSignificant < 10) {
-            string[j + 1] = leastSignificant + 0x00000030;
-        } else {
-            string[j + 1] = leastSignificant + 0x00000057;
-        }
-
-        j += 2;
-    }
-
-    string[outputLength - 1] = '\0';
-    return (const char*)string;
-}
-
 /*
     F(X,Y,Z) = XY v not(X) Z
     G(X,Y,Z) = XZ v Y not(Z)
     H(X,Y,Z) = X xor Y xor Z
     I(X,Y,Z) = Y xor (X v not(Z))
 */
-
+/*
 uint32_t F(uint32_t X, uint32_t Y, uint32_t Z)
 {
     return (X & Y) | ((!X) & Z);
@@ -64,7 +34,7 @@ uint32_t I(uint32_t X, uint32_t Y, uint32_t Z)
 }
 
 uint32_t leftrotate (uint32_t x, uint32_t c) {
-    return (x << c) or (x >> (32-c));
+    return (x << c) | (x >> (32-c));
 }
 
 bool mLittleEndian()
@@ -92,42 +62,35 @@ int mHash(const char *message)
 
     // padding
     // message must be 64 bits fewer than 512 bits multiple
-    uint32_t remain = 0;
-    if (length < 56) {
-        remain = 56 - length;
-    } else {
-        remain = length % 56; // 448 bits
+    uint32_t totalBitLength = length*8 + 1; // added one 1 bit
+    while ((totalBitLength + 64) % 512) {
+        totalBitLength += 1;
     }
 
-    const int newLength = length + remain + 8;
-
-    unsigned char *result = new unsigned char[newLength]; // length -> 512bits modulo
-
-    strcpy((char*)result, message);
-    result[length] = (unsigned int)128;
-    for (uint32_t i = 1; i < remain; i++) {
-        result[length + i] = (unsigned int)0;
+    const int outputMessageByteLength = (totalBitLength + 64) / 8;
+    uint8_t *outputMessage = new uint8_t[outputMessageByteLength];
+    strcpy((char*)outputMessage, message);
+    outputMessage[length + 1] = 0x80;
+    for (int i = length + 2; i < outputMessageByteLength - 7; i++) {
+        outputMessage[i] = 0x00;
     }
 
-    uint64_t length64 = length;
-    // original length must be stored
-    // at the end as a 64 bit integer
-    // with little-endian representation
-    result[length + remain] = (uint32_t) length64 >> 56;
-    result[length + remain + 1] = (uint32_t) length64 >> 48;
-    result[length + remain + 2] = (uint32_t) length64 >> 40;
-    result[length + remain + 3] = (uint32_t) length64 >> 32;
-    result[length + remain + 4] = (uint32_t) length64 >> 24;
-    result[length + remain + 5] = (uint32_t) length64 >> 16;
-    result[length + remain + 6] = (uint32_t) length64 >> 8;
-    result[length + remain + 7] = (uint32_t) length64;
+    outputMessage[outputMessageByteLength - 8] = 0x00;
+    outputMessage[outputMessageByteLength - 7] = 0x00;
+    outputMessage[outputMessageByteLength - 6] = 0x00;
+    outputMessage[outputMessageByteLength - 5] = 0x00;
 
-    /*
-        word A: 01 23 45 67
-        word B: 89 ab cd ef
-        word C: fe dc ba 98
-        word D: 76 54 32 10
-    */
+    outputMessage[outputMessageByteLength - 4] = length >> 24;
+    outputMessage[outputMessageByteLength - 3] = length >> 16;
+    outputMessage[outputMessageByteLength - 2] = length >> 8;
+    outputMessage[outputMessageByteLength - 1] = length;
+    // --- padding ended ---
+
+    //
+    //    word A: 01 23 45 67
+    //    word B: 89 ab cd ef
+    //    word C: fe dc ba 98
+    //    word D: 76 54 32 10
 
     // low order defined words
     uint32_t A = 0x67452301;
@@ -152,18 +115,20 @@ int mHash(const char *message)
     }
 
     // one round for each of the 512bits block
-    for (uint32_t i = 0; i < newLength; i += 64) {
+    for (uint32_t i = 0; i < outputMessageByteLength; i += 64) {
         uint32_t a = A;
         uint32_t b = B;
         uint32_t c = C;
         uint32_t d = D;
 
         uint32_t words[16];
+        int offset = 0;
         for (int j = 0; j < 16; j++) {
-            words[j] = (uint32_t)result[i] >> 24 |
-                                   (uint32_t)result[i + 1] >> 16 |
-                                   (uint32_t)result[i + 2] >> 8 |
-                                   (uint32_t)result[i + 3];
+            words[j] = (uint32_t)(outputMessage[i + offset]) << 24 |
+                                   (uint32_t)(outputMessage[i + offset + 1]) << 16 |
+                                   (uint32_t)(outputMessage[i + offset + 2]) << 8 |
+                                   (uint32_t)(outputMessage[i + offset + 3]);
+            offset += 4;
         }
 
         uint32_t f;
@@ -178,7 +143,7 @@ int mHash(const char *message)
             } else if (j < 48) {
                 f = H(b, c, d);
                 g = (3 * j + 5) % 16;
-            } else if (j < 64) {
+            } else {
                 f = I(b, c, d);
                 g = (7 * j) % 16;
             }
@@ -186,7 +151,7 @@ int mHash(const char *message)
             uint32_t temp = d;
             d = c;
             c = b;
-            b = b + leftrotate((a + f + k[j] + words[g]), roundShifts[i]);
+            b = b + leftrotate((a + f + k[j] + words[g]), roundShifts[j]);
             a = temp;
 
             A = A + a;
@@ -196,40 +161,43 @@ int mHash(const char *message)
         }
     }
 
-    unsigned char output[16];
-    output[0] = (uint32_t) A >> 24;
-    output[1] = (uint32_t) A & 0x00FF0000 >> 16;
-    output[2] = (uint32_t) A & 0x0000FF00 >> 8 ;
-    output[3] = (uint32_t) A & 0x000000FF;
+    printf("A: %x, B: %x, C: %x, D: %x\n", A, B, C, D);
 
-    output[4] = (uint32_t) B >> 24;
-    output[5] = (uint32_t) B & 0x00FF0000 >> 16;
-    output[6] = (uint32_t) B & 0x0000FF00 >> 8 ;
-    output[7] = (uint32_t) B & 0x000000FF;
+    uint8_t output[16];
+    output[0] =  A >> 24;
+    output[1] =  A >> 16;
+    output[2] =  A >> 8 ;
+    output[3] =  A;
 
-    output[8] = (uint32_t) C >> 24;
-    output[9] = (uint32_t) C & 0x00FF0000 >> 16;
-    output[10] = (uint32_t) C & 0x0000FF00 >> 8 ;
-    output[11] = (uint32_t) C & 0x000000FF;
+    output[4] = B >> 24;
+    output[5] = B >> 16;
+    output[6] = B >> 8 ;
+    output[7] = B;
 
-    output[12] = (uint32_t) D >> 24;
-    output[13] = (uint32_t) D & 0x00FF0000 >> 16;
-    output[14] = (uint32_t) D & 0x0000FF00 >> 8 ;
-    output[15] = (uint32_t) D & 0x000000FF;
+    output[8] = C >> 24;
+    output[9] = C >> 16;
+    output[10] = C >> 8 ;
+    output[11] = C;
+
+    output[12] =  D >> 24;
+    output[13] = D >> 16;
+    output[14] = D >> 8 ;
+    output[15] = D;
 
     //std::cout << "digest: " << mArrayToHex(output, 16) << std::endl;
-
+    for (int i = 0; i < 16; i++) {
+        printf("%02x", output[i]);
+    }
+    printf("\n");
 
     return 0;
 }
+*/
 
 void mPrint(const char *message)
 {
-
     mutils_print_mutex.lock();
-
     std::cout << message << std::endl;
-
-     mutils_print_mutex.unlock();
+    mutils_print_mutex.unlock();
 }
 
