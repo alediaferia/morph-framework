@@ -13,6 +13,8 @@ public:
 private:
     class Private;
     Private *const d;
+
+    friend class MThread;
 };
 
 #endif // MMUTEX_H

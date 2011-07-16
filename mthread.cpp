@@ -3,33 +3,37 @@
 
 #include <iostream>
 #include "mutils.h"
-#include "mmutex.h"
 
 class MThread::Private {
 public:
     Private(MThread *m) :
         m(m),
         finished(true)
-    {}
+    {
+        pthread_mutex_init(&threadMutex, 0);
+    }
 
     MThread *m;
     bool finished;
-    MMutex threadMutex;
+    pthread_mutex_t threadMutex;
+    pthread_cond_t waitCondition;
 };
 
 void* runThread(void* mthread)
 {
     MThread *thread = static_cast<MThread*>(mthread);
+
+    // initializing waitg condition for wait method
+    pthread_cond_init(&thread->d->waitCondition, 0);
     thread->run();
 
-    thread->d->threadMutex.lock();
+    pthread_mutex_lock(&thread->d->threadMutex);
     thread->d->finished = true;
-    thread->d->threadMutex.unlock();
+    pthread_cond_signal(&thread->d->waitCondition);
+    pthread_mutex_unlock(&thread->d->threadMutex);
 
     return 0;
 }
-
-static const int s_thread_loop_cycle_time = 50000; // usecs
 
 MThread::MThread() :
     d(new Private(this))
@@ -47,9 +51,9 @@ void MThread::run()
 
 void MThread::start()
 {
-    d->threadMutex.lock();
+    pthread_mutex_lock(&d->threadMutex);
     d->finished = false;
-    d->threadMutex.unlock();
+    pthread_mutex_unlock(&d->threadMutex);
 
     pthread_t pthread;
     pthread_create(&pthread, 0, runThread, (void*)this);
@@ -57,13 +61,9 @@ void MThread::start()
 
 void MThread::wait()
 {
-    while (1) {
-        d->threadMutex.lock();
-        if (d->finished) {
-            d->threadMutex.unlock();
-            return;
-        }
-        d->threadMutex.unlock();
-        usleep(s_thread_loop_cycle_time);
+    while (!d->finished) {
+        pthread_cond_wait(&d->waitCondition, &d->threadMutex);
     }
+
+    pthread_mutex_unlock(&d->threadMutex);
 }
