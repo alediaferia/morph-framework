@@ -2,9 +2,9 @@
 #include <string>
 #include <iostream>
 #include <cmath>
-#include <pthread.h>
+#include "mmutex.h"
 
- pthread_mutex_t mutil_mutex = PTHREAD_MUTEX_INITIALIZER;
+MMutex mutils_print_mutex;
 
 const char* mArrayToHex(const char* input, int length)
 {
@@ -226,10 +226,10 @@ int mHash(const char *message)
 void mPrint(const char *message)
 {
 
-    pthread_mutex_lock(&mutil_mutex);
+    mutils_print_mutex.lock();
 
     std::cout << message << std::endl;
 
-    pthread_mutex_unlock(&mutil_mutex);
+     mutils_print_mutex.unlock();
 }
 
