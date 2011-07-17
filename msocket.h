@@ -30,8 +30,8 @@ public:
     bool send ( const char* ) const;
     int recv ( MString& ) const;
 
-    void set_non_blocking ( const bool );
-    bool is_valid() const { return m_socket != -1; }
+    void setNoBlocking ( const bool );
+    bool isValid() const { return m_socket != -1; }
 
 private:
 

@@ -8,17 +8,15 @@ MSocket::MSocket() :
     memset ( &m_addr,0,sizeof ( m_addr ) );
 }
 
-MSocket::~MSocket()
-{
-    if ( is_valid())
+MSocket::~MSocket(){
+    if ( isValid())
         ::close ( m_socket );
 }
 
-bool MSocket::create()
-{
+bool MSocket::create(){
     m_socket = socket ( AF_INET,SOCK_STREAM,0 );
 
-    if ( ! is_valid() )
+    if ( ! isValid() )
         return false;
 
     int on = 1;
@@ -29,9 +27,8 @@ bool MSocket::create()
 
 
 
-bool MSocket::bind ( const int port )
-{
-    if ( ! is_valid() )
+bool MSocket::bind ( const int port ){
+    if ( ! isValid() )
     {
         return false;
     }
@@ -50,9 +47,8 @@ bool MSocket::bind ( const int port )
 }
 
 
-bool MSocket::listen() const
-{
-    if ( ! is_valid() )
+bool MSocket::listen() const{
+    if ( ! isValid() )
     {
         return false;
     }
@@ -68,8 +64,7 @@ bool MSocket::listen() const
 }
 
 
-bool MSocket::accept ( MSocket& new_socket ) const
-{
+bool MSocket::accept ( MSocket& new_socket ) const{
     int addr_length = sizeof ( m_addr );
     new_socket.m_socket = ::accept ( m_socket, ( sockaddr * ) &m_addr, ( socklen_t * ) &addr_length );
 
@@ -80,8 +75,7 @@ bool MSocket::accept ( MSocket& new_socket ) const
 }
 
 
-bool MSocket::send ( const char* s ) const
-{
+bool MSocket::send ( const char* s ) const{
     int status = ::send (m_socket, s, strlen(s), MSG_NOSIGNAL );
     if ( status == -1 )
     {
@@ -94,8 +88,7 @@ bool MSocket::send ( const char* s ) const
 }
 
 
-int MSocket::recv ( MString& s ) const
-{
+int MSocket::recv ( MString& s ) const{
     char buf [ MAXRECV + 1 ];
     s = "";
 
@@ -118,9 +111,8 @@ int MSocket::recv ( MString& s ) const
 }
 
 
-bool MSocket::connect ( const char* host, const int port )
-{
-    if ( ! is_valid() ) return false;
+bool MSocket::connect ( const char* host, const int port ){
+    if ( ! isValid() ) return false;
 
     m_addr.sin_family = AF_INET;
     m_addr.sin_port = htons ( port );
@@ -135,8 +127,8 @@ bool MSocket::connect ( const char* host, const int port )
         return false;
 }
 
-void MSocket::set_non_blocking ( const bool b )
-{
+void MSocket::setNoBlocking ( const bool b ){
+
     int opts;
     opts = fcntl ( m_socket,F_GETFL );
 
