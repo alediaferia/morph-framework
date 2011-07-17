@@ -7,16 +7,16 @@
 
 class MServerSocket : private MSocket
 {
- public:
+public:
 
-  MServerSocket ( int port );
-  MServerSocket(){}
-  virtual ~MServerSocket();
+    MServerSocket ( int port );
+    MServerSocket(){}
+    virtual ~MServerSocket();
 
-  const MServerSocket& operator << (  MString& ) const;
-  const MServerSocket& operator >> ( MString& ) const;
+    const MServerSocket& operator << (  MString& ) const;
+    const MServerSocket& operator >> ( MString& ) const;
 
-  void accept ( MServerSocket& );
+    void accept ( MServerSocket& );
 
 };
 

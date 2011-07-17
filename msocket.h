@@ -31,11 +31,11 @@ public:
     int recv ( MString& ) const;
 
     void set_non_blocking ( const bool );
-    bool is_valid() const { return m_sock != -1; }
+    bool is_valid() const { return m_socket != -1; }
 
 private:
 
-    int m_sock;
+    int m_socket;
     sockaddr_in m_addr;
 };
 

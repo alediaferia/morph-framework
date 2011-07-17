@@ -5,17 +5,17 @@
 
 MServerSocket::MServerSocket ( int port )
 {
-  if ( ! MSocket::create() )
+    if ( ! MSocket::create() )
     {
-      std::cout<<"Error create"<<std::endl;
+        std::cout<<"Error create"<<std::endl;
     }
 
-  if ( ! MSocket::bind ( port ) )
+    if ( ! MSocket::bind ( port ) )
     {
-         std::cout<<"Error bind"<<std::endl;
+        std::cout<<"Error bind"<<std::endl;
     }
 
-  if ( ! MSocket::listen() )
+    if ( ! MSocket::listen() )
     {
         std::cout<<"Error listen"<<std::endl;
     }
@@ -29,30 +29,30 @@ MServerSocket::~MServerSocket()
 
 const MServerSocket& MServerSocket::operator << ( MString& s ) const
 {
-  if ( ! MSocket::send ( s.data() ) )
+    if ( ! MSocket::send (s.data()))
     {
-     std::cout<<"Error send"<<std::endl;
+        std::cout<<"Error send"<<std::endl;
     }
 
-  return *this;
+    return *this;
 
 }
 
 
 const MServerSocket& MServerSocket::operator >> ( MString& s ) const
 {
-  if ( ! MSocket::recv ( s ) )
+    if ( ! MSocket::recv (s))
     {
-       std::cout<<"Error receive"<<std::endl;
+        std::cout<<"Error receive"<<std::endl;
     }
 
-  return *this;
+    return *this;
 }
 
 void MServerSocket::accept ( MServerSocket& sock )
 {
-  if ( ! MSocket::accept ( sock ) )
+    if ( ! MSocket::accept ( sock ) )
     {
-     std::cout<<"Error accept"<<std::endl;
+        std::cout<<"Error accept"<<std::endl;
     }
 }
