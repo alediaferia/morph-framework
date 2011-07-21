@@ -155,7 +155,7 @@ bool MVariable::store(void* data, unsigned int typeId)
 
     d->data = new T();
     if (d->data == 0) {
-        std::cout << "unable to allocate memory" << std::endl;
+        //std::cout << "unable to allocate memory" << std::endl;
         return false;
     }
 
@@ -163,7 +163,7 @@ bool MVariable::store(void* data, unsigned int typeId)
     *tmp = *((T*)data);
 
     d->type = (MVariable::Type)typeId;
-    std::cout << "Data type: " << d->type << std::endl;
+    //std::cout << "Data type: " << d->type << std::endl;
     return true;
 }
 

@@ -4,16 +4,16 @@ template <typename T>
 class MList;
 
 template <typename T>
-class nodeClass
+class MListNode
 {
 public:
     template<typename> friend class MList;
-    nodeClass() {
-        next = 0;
-    }
+    MListNode() :
+        next(0)
+    {}
 private:
     T data;
-    nodeClass *next;
+    MListNode *next;
 };
 
 template <typename T>
@@ -35,21 +35,21 @@ public:
     int size() const;
     void clear();
     T get(int i) const;
-    void sort() ;
+    void sort();
 private:
     void free();
-    nodeClass<T> *head;
-    nodeClass<T> *tail;
+    MListNode<T> *head;
+    MListNode<T> *tail;
 };
 
 template<typename T>
 void MList<T>::sort() {
-    nodeClass<T> *ptr1;
-    nodeClass<T> *ptr2;
-    nodeClass<T> *temp;
-    nodeClass<T> *Imithead1;
-    nodeClass<T> *Imithead2;
-    nodeClass<T> *before;
+    MListNode<T> *ptr1;
+    MListNode<T> *ptr2;
+    MListNode<T> *temp;
+    MListNode<T> *Imithead1;
+    MListNode<T> *Imithead2;
+    MListNode<T> *before;
 
     if (head != 0) {
         ptr2 = head;
@@ -66,7 +66,8 @@ void MList<T>::sort() {
                 head = ptr1;
             }
             ptr1 = ptr1->next;
-            ptr2 = head;}
+            ptr2 = head;
+        }
         before = head;
         Imithead1 = Imithead2 = head->next;
 
@@ -98,8 +99,8 @@ void MList<T>::sort() {
 
 template<typename T>
 void MList<T>::removeAll(T ele){
-    nodeClass<T>*prec;
-    nodeClass<T>*ptr;
+    MListNode<T>*prec;
+    MListNode<T>*ptr;
 
     ptr=head;
     if(head==0){
@@ -126,8 +127,8 @@ void MList<T>::removeAll(T ele){
 
 template<typename T>
 void MList<T>::remove(T ele){
-    nodeClass<T>*prec;
-    nodeClass<T>*ptr;
+    MListNode<T>*prec;
+    MListNode<T>*ptr;
 
     ptr=head;
     if(head==0){
@@ -156,7 +157,7 @@ void MList<T>::remove(T ele){
 template<typename T>
 T MList<T>::get(int i) const{
     int index = 0;
-    nodeClass<T> *ptr = head;
+    MListNode<T> *ptr = head;
     while ( ptr != 0 ){
         if(i==index){
             return ptr->data;
@@ -164,6 +165,8 @@ T MList<T>::get(int i) const{
         ptr = ptr -> next;
         index++;
     }
+
+    return T();
 }
 
 template <typename T>
@@ -173,7 +176,7 @@ const MList<T>& MList<T>::operator= ( const MList &right )
         return *this;
     }
     free();
-    nodeClass<T> *ptr = right.head;
+    MListNode<T> *ptr = right.head;
     while ( ptr != 0 ) {
         append( ptr -> data);
         ptr = ptr -> next;
@@ -185,7 +188,7 @@ template<typename T>
 int MList<T>::size() const
 {
     int index = 0;
-    nodeClass<T> *ptr = head;
+    MListNode<T> *ptr = head;
     while ( ptr != 0 ){
         ptr = ptr -> next;
         index++;
@@ -215,21 +218,34 @@ void MList<T>::insert(int i, const T &item )
 {
     if(i>=this->size()){
         append(item);
-    }else{
-        i=i-1;
-        int index = 0;
-        nodeClass<T> *ptr = head;
-        while ( ptr != 0 ){
-            if(i==index){
-                nodeClass<T> *tmp=new nodeClass<T>;
-                tmp->data = item;
-                tmp->next=ptr->next;
-                ptr->next=tmp;
-                return;
+        return;
+    }
+
+    if (i == 0) { // prepending
+        MListNode<T> *node = new MListNode<T>;
+        node->data = item;
+        node->next = head;
+        head = node;
+        return;
+    }
+
+    int index = 0;
+    MListNode<T> *ptr = head;
+    while ( ptr != 0 ){
+        if(i==index){
+            MListNode<T> *tmp=new MListNode<T>;
+            tmp->data = item;
+            tmp->next=ptr->next;
+            ptr->next=tmp;
+
+            if (tmp->next == 0) {
+                tail = tmp;
             }
-            ptr = ptr -> next;
-            index++;
+
+            return;
         }
+        ptr = ptr -> next;
+        index++;
     }
 }
 
@@ -237,14 +253,14 @@ template <typename T>
 void MList<T>::append( const T &item )
 {
     if (isEmpty()){
-        nodeClass<T> *node = new nodeClass<T>;
+        MListNode<T> *node = new MListNode<T>;
         node->data = item;
         node->next = head;
         head = node;
         if ( tail == 0 ) { tail = node; }
         return;
     }
-    nodeClass<T> *ptr = new nodeClass<T>;
+    MListNode<T> *ptr = new MListNode<T>;
     ptr -> data = item;
     tail -> next = ptr;
     tail = ptr;
@@ -254,7 +270,7 @@ template <typename T>
 void MList<T>::removeFirst()
 {
     if (!isEmpty() ) {
-        nodeClass<T> *ptr = head;
+        MListNode<T> *ptr = head;
         head = head -> next;
         delete ptr;
         if ( head == 0 ){
@@ -270,7 +286,7 @@ void MList<T>::removeLast()
         if ( head == tail ) {
             removeFirst();
         }else{
-            nodeClass<T> *ptr = head;
+            MListNode<T> *ptr = head;
             while ( ptr -> next -> next != 0) {
                 ptr = ptr -> next;
             }
@@ -298,7 +314,7 @@ template <typename T>
 void MList<T>::print( std::ostream &out )const
 {
     int i = 0;
-    nodeClass<T> *ptr = head;
+    MListNode<T> *ptr = head;
     while ( ptr != 0 ){
         out << ptr -> data << std::endl;
         ptr = ptr -> next;

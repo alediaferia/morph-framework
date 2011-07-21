@@ -17,7 +17,7 @@
 
 #include "macros_p.h"
 
-class MString{
+class MString {
 
 public: 
     MString(const char *);
@@ -55,7 +55,8 @@ protected:
     void detach();
 
 private:
-    M_SHARED_D_POINTER
+    class Private;
+    MSharedPtr<Private> d;
 };
 
 std::ostream& operator<<( std::ostream&, const MString&);

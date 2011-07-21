@@ -1,7 +1,6 @@
 #ifndef MSERVERSOCKET_H
 #define MSERVERSOCKET_H
 
-
 #include "msocket.h"
 #include "mstring.h"
 

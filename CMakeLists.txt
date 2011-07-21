@@ -12,6 +12,7 @@ mthread.cpp
 mmutex.cpp
 msocket.cpp
 mserversocket.cpp
+#mdictionary.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})
