@@ -6,28 +6,26 @@
 #include "mthread.h"
 #include "mutils.h"
 
+class MyThread : public MThread
+{
+protected:
+    void run() {
+        int i = 5;
+        while (i > 0) {
+            mPrint("Hello");
+            i--;
+            sleep(1);
+        }
+    }
+};
+
 int main(int argc, char **argv)
 {
-    MList<int> list;
+    MyThread *t = new MyThread();
+    t->start();
+    t->wait();
 
-    list.insert(0, 23);
-
-    std::cout << "size: " <<  list.size() << std::endl;
-
-    list.append(65);
-    list.append(54);
-    list.append(61);
-    list.append(76);
-    std::cout << "size: " <<  list.size() << std::endl;
-
-    while (1) {
-        if (!list.size()) {
-            break;
-        }
-
-        int value = list.pickAt(0);
-        std::cout << "picked value " << value << std::endl;
-    }
+    delete t;
 
     return 0;
 }

@@ -11,10 +11,11 @@ public:
     void unlock();
 
 private:
-    class Private;
-    Private *const d;
+    class MMutexPrivate;
+    MMutexPrivate *const d;
 
-    friend class MThread;
+    friend class MWaitCondition;
+
 };
 
 #endif // MMUTEX_H

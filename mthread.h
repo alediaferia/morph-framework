@@ -15,8 +15,8 @@ protected:
 
 private:
     friend void* runThread(void*);
-    class Private;
-    Private * const d;
+    class MThreadPrivate;
+    MThreadPrivate * const d;
 };
 
 #endif // MTHREAD_H

@@ -12,6 +12,9 @@ mthread.cpp
 mmutex.cpp
 msocket.cpp
 mserversocket.cpp
+mqueue.cpp
+mwaitcondition.cpp
+mevent.cpp
 #mdictionary.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
