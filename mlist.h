@@ -26,6 +26,7 @@ public:
     const MList &operator=( const MList &right );
     void insert(int index, const T &item );
     void append( const T &item );
+    T pickAt(int index);
     void removeFirst();
     void removeLast();
     void removeAll(T ele);
@@ -295,6 +296,37 @@ void MList<T>::removeLast()
             tail -> next = 0;
         }
     }
+}
+
+template <typename T>
+T MList<T>::pickAt(int index)
+{
+    int i = 0;
+    MListNode<T> *node = head;
+    MListNode<T> *previous = 0;
+    do {
+        if (!node) {
+            break;
+        }
+
+        if (i == index) {
+            if (!previous) {
+                head = node->next;
+
+            } else {
+                previous->next = node->next;
+            }
+            T data = node->data;
+            delete node;
+            return data;
+        }
+
+        previous = node;
+        node = node->next;
+        i++;
+    } while (i <= index);
+
+    return T();
 }
 
 template <typename T>

@@ -14,11 +14,20 @@ int main(int argc, char **argv)
 
     std::cout << "size: " <<  list.size() << std::endl;
 
-    list.insert(0, 65);
-
+    list.append(65);
+    list.append(54);
+    list.append(61);
+    list.append(76);
     std::cout << "size: " <<  list.size() << std::endl;
 
-    std::cout << list.get(0) << " " << list.get(1) << std::endl;
+    while (1) {
+        if (!list.size()) {
+            break;
+        }
+
+        int value = list.pickAt(0);
+        std::cout << "picked value " << value << std::endl;
+    }
 
     return 0;
 }
