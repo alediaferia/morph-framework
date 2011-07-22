@@ -6,6 +6,8 @@
 #include "mmutex.h"
 #include "mwaitcondition.h"
 
+static MThread* s_currentThread = 0;
+
 class MThread::MThreadPrivate {
 public:
     MThreadPrivate(MThread *m) :
@@ -50,7 +52,6 @@ void MThread::run()
 
 void MThread::start()
 {
-    //pthread_mutex_lock(&d->threadMutex);
     d->threadMutex.lock();
     d->finished = false;
     d->threadMutex.unlock();
@@ -62,9 +63,11 @@ void MThread::start()
 void MThread::wait()
 {
     while (!d->finished) {
-        //pthread_cond_wait(&d->waitCondition, &d->threadMutex);
         d->waitCondition.wait(&d->threadMutex);
     }
+}
 
-    //pthread_mutex_unlock(&d->threadMutex);
+bool MThread::finished() const
+{
+    return d->finished;
 }

@@ -15,6 +15,7 @@ mserversocket.cpp
 mqueue.cpp
 mwaitcondition.cpp
 mevent.cpp
+meventloop.cpp
 #mdictionary.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})

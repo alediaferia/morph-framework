@@ -10,6 +10,10 @@ public:
     void start();
     void wait();
 
+    bool finished() const;
+
+    //static MThread* currentThread();
+
 protected:
     virtual void run();
 
