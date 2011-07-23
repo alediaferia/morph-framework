@@ -2,11 +2,14 @@
 #define MOBJECT_H
 
 #include "mproperty_p.h"
-
+#include "mshareddataptr.h"
 #include "mobject_macros.h"
 
 class MObjectDelegate;
 class PropertyContainer;
+
+class MObject;
+typedef MSharedPtr<MObject> mref;
 
 /**
  * @class MObject is the base class
@@ -23,6 +26,8 @@ public:
 
     MObject(MObject *parent = 0);
     ~MObject();
+
+    virtual bool copyable() const;
 
 private:
     class Private;

@@ -18,14 +18,18 @@ MObject::MObject(MObject *parent) :
     M_SYNTHETIZE_PROPERTY(id),
     M_SYNTHETIZE_PROPERTY(number)
 {
-    std::cout << "registering object to watcher " << this << std::endl;
-    MObjectWatcher::instance()->registerObject(this);
 }
 
 MObject::~MObject()
 {
+    printf("%d dying\n", this);
     delete d;
-    MObjectWatcher::instance()->objectDeleted(this);
+}
+
+bool MObject::copyable() const
+{
+    static const bool copyable = false;
+    return copyable;
 }
 
 /*void MObject::setNumber(int n)

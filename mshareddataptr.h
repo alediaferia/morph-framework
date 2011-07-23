@@ -94,7 +94,8 @@ public:
 
         std::cout << "detaching..." << std::endl;
         PrivateSharedPtr<T> *newDPtr = new PrivateSharedPtr<T>(this);
-        newDPtr->ptr = new T(*d->ptr);
+        newDPtr->ptr = (T*)malloc(sizeof(T));
+        *newDPtr->ptr = *d->ptr;
         newDPtr->refCount = 1;
 
         d->deref();
@@ -113,7 +114,10 @@ private:
 
         void deref()
         {
-            if(!--this->refCount) {
+            --this->refCount;
+            std::cout << "refcount " << this->refCount << std::endl;
+
+            if(!this->refCount) {
                 std::cout << "freeing data" << std::endl;
                 delete ptr;
                 delete this;

@@ -94,5 +94,9 @@ private:
     struct PropTypeHelper { \
         typedef MProperty<X> _name::*typed_prop_member; \
     }; \
+    virtual const char* className() const { \
+        static const char _className[] = #_name; \
+        return _className; \
+    }
 
 #endif // MOBJECT_MACROS_H
