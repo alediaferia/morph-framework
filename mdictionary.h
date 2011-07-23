@@ -16,8 +16,8 @@ public:
     V value(const K& key) const;
 
 private:
-    class Private;
-    MSharedPtr<Private> d;
+    class MDictionaryPrivate;
+    MSharedPtr<MDictionaryPrivate> d;
 };
 
 #endif // MDICTIONARY_H

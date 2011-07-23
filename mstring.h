@@ -13,7 +13,7 @@
 #include <iostream>
 #include <ostream>
 
-#include "msharedptr.h"
+#include "mshareddataptr.h"
 
 #include "macros_p.h"
 
@@ -51,12 +51,9 @@ public:
     MString toLowerCase() const;
     MString toUpperCase() const;
 
-protected:
-    void detach();
-
 private:
     class Private;
-    MSharedPtr<Private> d;
+    MSharedDataPtr<Private> d;
 };
 
 std::ostream& operator<<( std::ostream&, const MString&);

@@ -14,6 +14,13 @@ public:
         str(0)
     {}
 
+    Private(const Private &copy) :
+        m(copy.m)
+    {
+        str = new char[strlen(copy.str)];
+        strcpy((char*)str, copy.str);
+    }
+
     ~Private()
     {
         //std::cout << "freeing string data" << std::endl;
@@ -46,7 +53,7 @@ const char* MString::data() {
 }
 
 MString::MString(const char *str_array) :
-    d(MSharedPtr<Private>(new Private(this)))
+    d(MSharedDataPtr<Private>(new Private(this)))
 {
     d->str = new char[strlen(str_array)];
     strcpy((char*) d->str, str_array);
@@ -55,18 +62,18 @@ MString::MString(const char *str_array) :
 MString::MString(const MString &copy) :
     d(copy.d)
 {
-    d->str = copy.d->str;
 }
 
 MString::MString() :
- d(MSharedPtr<Private>(new Private(this)))
+ d(MSharedDataPtr<Private>(new Private(this)))
 {
 }
 
 MString::~MString() {
 }
 
-void MString::print(std::ostream& os) const {
+void MString::print(std::ostream& os) const
+{
     os << d->str;
 }
 
@@ -101,11 +108,10 @@ bool MString::operator==(const MString& val) {
  * Appends the string other onto the end of this string and returns a reference to this string.
  */
 MString& MString::operator +=(const MString& val) {
-    detach();
-
     int totalSize = strlen(d->str) + strlen(val.d->str);
     char *buffer = new char[totalSize + 1];
     strcpy(buffer, d->str);
+    strcat(buffer, val.d->str);
     delete[] d->str;
     d->str = buffer;
     return *this;
@@ -350,17 +356,5 @@ std::ostream& operator<<(std::ostream& os, const MString& mstr) {
 
 void MString::clear()
 {
-    detach();
     d->clear();
-}
-
-void MString::detach()
-{
-    //std::cout << "detaching" << std::endl;
-
-    char *data = new char[strlen(d->str)];
-    strcpy(data, d->str);
-
-    d = MSharedPtr<Private>(new Private(this));
-    d->str = data;
 }

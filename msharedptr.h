@@ -79,6 +79,11 @@ public:
        d->refCount++;
     }
 
+    int refCount() const
+    {
+        return d->refCount;
+    }
+
 private:
     template <typename X>
     class PrivateSharedPtr {
@@ -92,7 +97,7 @@ private:
         void deref()
         {
             if(!--this->refCount) {
-                //std::cout << "freeing data" << std::endl;
+                std::cout << "freeing data" << std::endl;
                 delete ptr;
                 delete this;
             }

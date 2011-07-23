@@ -1,6 +1,4 @@
 #include "mobject.h"
-
-#include <utility>
 #include "mstring.h"
 
 #include "mobjectwatcher.h"
@@ -15,15 +13,8 @@ public:
     MObject *m;
 };
 
-
-#define M_DELEGATE_FUNC(dname, func) \
-if (this->dname) { \
-    this->dname->func; \
-}
-
 MObject::MObject(MObject *parent) :
     d(new Private(this)),
-    M_SYNTHETIZE_PROPERTY(delegate),
     M_SYNTHETIZE_PROPERTY(id),
     M_SYNTHETIZE_PROPERTY(number)
 {
@@ -34,7 +25,6 @@ MObject::MObject(MObject *parent) :
 MObject::~MObject()
 {
     delete d;
-    M_DELEGATE_FUNC(delegate, destroyed(this))
     MObjectWatcher::instance()->objectDeleted(this);
 }
 

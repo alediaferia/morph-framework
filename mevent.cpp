@@ -2,6 +2,15 @@
 
 #include "mevent_p.h"
 
-MEvent::MEvent()
+MEvent::MEvent() :
+    d(new MEventPrivate(this))
 {
+}
+
+MEvent::~MEvent()
+{}
+
+MEvent::Type MEvent::type() const
+{
+    return d->type;
 }

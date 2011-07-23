@@ -12,13 +12,15 @@ public:
         terminate(false)
     {}
 
+    MEventLoop *m;
     bool terminate;
     MQueue<MEvent*> eventQueue;
     MMutex mutex;
     MWaitCondition waitCondition;
 };
 
-MEventLoop::MEventLoop()
+MEventLoop::MEventLoop() :
+    d(new MEventLoopPrivate(this))
 {
 }
 

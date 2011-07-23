@@ -1,11 +1,7 @@
 #ifndef MOBJECT_H
 #define MOBJECT_H
 
-#include <map>
-#include <list>
-
 #include "mproperty_p.h"
-#include <iostream>
 
 #include "mobject_macros.h"
 
@@ -22,7 +18,6 @@ class MObject {
 
 public:    
     M_OBJECT(MObject)
-    M_PROPERTY(MObjectDelegate*, delegate)
     M_PROPERTY(const char*, id)
     M_PROPERTY(int, number)
 
@@ -32,11 +27,6 @@ public:
 private:
     class Private;
     Private* const d;
-};
-
-class MObjectDelegate {
-public:
-    virtual void destroyed(MObject *) = 0;
 };
 
 

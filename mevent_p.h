@@ -8,6 +8,7 @@ public:
         m(m)
     {}
 
+    MEvent *m;
     MEvent::Type type;
 };
 

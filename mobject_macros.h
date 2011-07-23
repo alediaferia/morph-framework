@@ -6,23 +6,69 @@
 #include <vector>
 #include <utility>
 
-class AbstractSlot {
+class InvokableMethod {
 public:
-    virtual void invoke() = 0;
+    virtual void invoke()
+    {}
+    virtual void invoke(void *arg1)
+    {}
+    virtual void invoke(void *arg1, void* arg2)
+    {}
+};
+
+// class that identifies a generic
+// invokable method that takes
+// no arguments
+// method f of type T is invoked on object of type C
+template<typename C, typename T>
+class InvokableMethod0 : public InvokableMethod {
+public:
+    InvokableMethod0(C* o, T f, const char *name) :
+        o(o),
+        f(f)
+    {
+    }
+    void invoke()
+    {
+        (o->*f)();
+    }
+
+private:
+    C* o;
+    T f;
 };
 
 template<typename C, typename T>
-class Slot : public AbstractSlot {
+class InvokableMethod1 : public InvokableMethod {
 public:
-    Slot(C* o, T f, const char *name) :
+    InvokableMethod1(C* o, T f, const char *name) :
         o(o),
         f(f)
     {
     }
 
-    void invoke()
+    void invoke(void *arg1)
     {
-        (o->*f)();
+        (o->*f)(arg1);
+    }
+
+private:
+    C* o;
+    T f;
+};
+
+template<typename C, typename T>
+class InvokableMethod2 : public InvokableMethod {
+public:
+    InvokableMethod2(C* o, T f, const char *name) :
+        o(o),
+        f(f)
+    {
+    }
+
+    void invoke(void *arg1, void* arg2)
+    {
+        (o->*f)(arg1, arg2);
     }
 
 private:

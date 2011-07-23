@@ -1,5 +1,8 @@
 #include <iostream>
 
+
+#include "mshareddataptr.h"
+
 template <typename T>
 class MList;
 
@@ -11,6 +14,12 @@ public:
     MListNode() :
         next(0)
     {}
+
+    MListNode(const MListNode &copy) :
+        data(copy.data),
+        next(copy.next)
+    {}
+
 private:
     T data;
     MListNode *next;
@@ -20,10 +29,10 @@ template <typename T>
 class MList
 {
 public:
-    MList() { head = tail = 0; }
+    MList();
     MList( const MList &source );
     ~MList();
-    const MList &operator=( const MList &right );
+    MList &operator=( const MList &right );
     void insert(int index, const T &item );
     void append( const T &item );
     T pickAt(int index);
@@ -31,71 +40,92 @@ public:
     void removeLast();
     void removeAll(T ele);
     void remove(T ele);
-    bool isEmpty()const { return head == 0; }
+    bool isEmpty()const { return d->size == 0; }
     void print(std::ostream &out ) const;
     int size() const;
     void clear();
     T get(int i) const;
-    void sort();
+
 private:
-    void free();
-    MListNode<T> *head;
-    MListNode<T> *tail;
+    template<typename X>
+    class MListPrivate;
+
+    MSharedDataPtr<MListPrivate<T> > d;
 };
 
 template<typename T>
-void MList<T>::sort() {
-    MListNode<T> *ptr1;
-    MListNode<T> *ptr2;
-    MListNode<T> *temp;
-    MListNode<T> *Imithead1;
-    MListNode<T> *Imithead2;
-    MListNode<T> *before;
+template<typename X>
+class MList<T>::MListPrivate
+{
+public:
+    MListPrivate(MList<T>* m)
+        : m(m),
+          head(0),
+          tail(0),
+          size(0)
+    {}
 
-    if (head != 0) {
-        ptr2 = head;
-        ptr1 = head->next;
-
-        while(ptr1 != 0 ) {
-            if (ptr2->data > ptr1->data ) {
-                temp = ptr2;
-                while(temp->next != ptr1){
-                    temp = temp->next;
-                }
-                temp->next = ptr1->next;
-                ptr1->next = ptr2;
-                head = ptr1;
-            }
-            ptr1 = ptr1->next;
-            ptr2 = head;
+    MListPrivate(const MListPrivate &copy) :
+        m(m),
+        size(copy.size)
+    {
+        if (!size) {
+            head = 0;
+            tail = 0;
+            return;
         }
-        before = head;
-        Imithead1 = Imithead2 = head->next;
 
-        while (Imithead1 != 0) {
-            while (Imithead2 != 0 ) {
-                ptr1 = ptr2 =Imithead2;
-                while(ptr1 != 0 ) {
-                    if (ptr2->data > ptr1->data ) {
-                        temp = ptr2;
-                        while(temp->next != ptr1){
-                            temp = temp->next;
-                        }
-                        before->next = ptr1;
-                        temp->next = ptr1->next;
-                        ptr1->next = ptr2;
-                        Imithead2 = ptr1;
-                    }
-                    ptr1 = ptr1->next;
-                    ptr2 = Imithead2;
-                }
-                before = Imithead2;
-                Imithead2 = Imithead2->next;
-            }
-            Imithead1 = Imithead1->next;
-            Imithead2 = Imithead1;
+        head = new MListNode<T>(*copy.head);
+        MListNode<T> *copyCurrent = copy.head;
+        MListNode<T> *current = head;
+        while (copyCurrent->next) {
+            current->next = new MListNode<T>(*copyCurrent->next);
+            copyCurrent = copyCurrent->next;
+            current = current->next;
         }
+
+        tail = copyCurrent;
     }
+
+    ~MListPrivate()
+    {
+        free();
+    }
+
+    void free()
+    {
+        MListNode<T> *current = head;
+        while (current->next) {
+            MListNode<T> *tmp = current;
+            current = current->next;
+            delete tmp;
+        }
+
+        tail = 0;
+        head = 0;
+        size = 0;
+    }
+
+    MList<T> *m;
+    MListNode<T> *head;
+    MListNode<T> *tail;
+    int size;
+};
+
+template<typename T>
+MList<T>::MList() :
+    d(new MListPrivate<T>(this))
+{}
+
+template <class T>
+MList<T>::MList( const MList &source ) :
+    d(source.d)
+{
+}
+
+template <typename T>
+MList<T>::~MList()
+{
 }
 
 template<typename T>
@@ -103,19 +133,21 @@ void MList<T>::removeAll(T ele){
     MListNode<T>*prec;
     MListNode<T>*ptr;
 
-    ptr=head;
-    if(head==0){
+    ptr=d->head;
+    if(d->head==0){
         return;
     }
 
     while (ptr!=NULL){
         if (ptr->data==ele){
-            if (ptr==head){
-                head=head->next;
+            if (ptr==d->head){
+                d->head=d->head->next;
+                d->size--;
                 delete ptr;
-                ptr=head;
+                ptr=d->head;
             }else{
                 prec->next=ptr->next;
+                d->size--;
                 delete ptr;
                 ptr=prec->next;
             }
@@ -131,20 +163,22 @@ void MList<T>::remove(T ele){
     MListNode<T>*prec;
     MListNode<T>*ptr;
 
-    ptr=head;
-    if(head==0){
+    ptr=d->head;
+    if(d->head==0){
         return;
     }
 
     while (ptr!=NULL){
         if (ptr->data==ele){
-            if (ptr==head){
-                head=head->next;
+            if (ptr==d->head){
+                d->head=d->head->next;
+                d->size--;
                 delete ptr;
-                ptr=head;
+                ptr=d->head;
                 return;
             }else{
                 prec->next=ptr->next;
+                d->size--;
                 delete ptr;
                 ptr=prec->next;
             }
@@ -156,14 +190,15 @@ void MList<T>::remove(T ele){
 }
 
 template<typename T>
-T MList<T>::get(int i) const{
+T MList<T>::get(int i) const
+{
     int index = 0;
-    MListNode<T> *ptr = head;
+    MListNode<T> *ptr = d->head;
     while ( ptr != 0 ){
         if(i==index){
             return ptr->data;
         }
-        ptr = ptr -> next;
+        ptr = ptr->next;
         index++;
     }
 
@@ -171,53 +206,24 @@ T MList<T>::get(int i) const{
 }
 
 template <typename T>
-const MList<T>& MList<T>::operator= ( const MList &right )
+MList<T>& MList<T>::operator= ( const MList &right )
 {
-    if ( this == &right ) {
-        return *this;
-    }
-    free();
-    MListNode<T> *ptr = right.head;
-    while ( ptr != 0 ) {
-        append( ptr -> data);
-        ptr = ptr -> next;
-    }
-    return *this;
+    d = right.d;
 }
 
 template<typename T>
 int MList<T>::size() const
 {
-    int index = 0;
-    MListNode<T> *ptr = head;
-    while ( ptr != 0 ){
-        ptr = ptr -> next;
-        index++;
-    }
-    return index;
+    return d->size;
 }
 
 template <class T>
 std::ostream& operator<<( std::ostream&, const MList<T>&);
 
-template <class T>
-MList<T>::MList( const MList &source )
-{
-    head = tail = 0;
-    *this = source;
-}
-
-
-template <typename T>
-MList<T>::~MList()
-{
-    free();
-}
-
 template <typename T>
 void MList<T>::insert(int i, const T &item )
 {
-    if(i>=this->size()){
+    if (i >= d->size){
         append(item);
         return;
     }
@@ -225,13 +231,14 @@ void MList<T>::insert(int i, const T &item )
     if (i == 0) { // prepending
         MListNode<T> *node = new MListNode<T>;
         node->data = item;
-        node->next = head;
-        head = node;
+        node->next = d->head;
+        d->head = node;
+        d->size++;
         return;
     }
 
     int index = 0;
-    MListNode<T> *ptr = head;
+    MListNode<T> *ptr = d->head;
     while ( ptr != 0 ){
         if(i==index){
             MListNode<T> *tmp=new MListNode<T>;
@@ -240,12 +247,13 @@ void MList<T>::insert(int i, const T &item )
             ptr->next=tmp;
 
             if (tmp->next == 0) {
-                tail = tmp;
+                d->tail = tmp;
             }
 
+            d->size++;
             return;
         }
-        ptr = ptr -> next;
+        ptr = ptr->next;
         index++;
     }
 }
@@ -256,53 +264,62 @@ void MList<T>::append( const T &item )
     if (isEmpty()){
         MListNode<T> *node = new MListNode<T>;
         node->data = item;
-        node->next = head;
-        head = node;
-        if ( tail == 0 ) { tail = node; }
+        node->next = d->head;
+        d->head = node;
+        if ( d->tail == 0 ) { d->tail = node; }
+        d->size++;
         return;
     }
     MListNode<T> *ptr = new MListNode<T>;
     ptr -> data = item;
-    tail -> next = ptr;
-    tail = ptr;
+    d->tail -> next = ptr;
+    d->tail = ptr;
+    d->size++;
 }
 
 template <typename T>
 void MList<T>::removeFirst()
 {
-    if (!isEmpty() ) {
-        MListNode<T> *ptr = head;
-        head = head -> next;
-        delete ptr;
-        if ( head == 0 ){
-            tail = 0;
-        }
+    if (isEmpty() ) {
+        return;
     }
+    MListNode<T> *ptr = d->head;
+    d->head = d->head->next;
+    delete ptr;
+    if ( d->head == 0 ){
+        d->tail = 0;
+    }
+
+    d->size--;
 }
 
 template <typename T>
 void MList<T>::removeLast()
 {
-    if (!isEmpty() ) {
-        if ( head == tail ) {
-            removeFirst();
-        }else{
-            MListNode<T> *ptr = head;
-            while ( ptr -> next -> next != 0) {
-                ptr = ptr -> next;
-            }
-            delete tail;
-            tail = ptr;
-            tail -> next = 0;
-        }
+    if (isEmpty() ) {
+        return;
     }
+
+    if ( d->head == d->tail ) {
+        removeFirst();
+    }else{
+        MListNode<T> *ptr = d->head;
+        while ( ptr -> next -> next != 0) {
+            ptr = ptr -> next;
+        }
+        delete d->tail;
+        d->tail = ptr;
+        d->tail -> next = 0;
+    }
+
+    d->size--;
 }
 
 template <typename T>
 T MList<T>::pickAt(int index)
 {
     int i = 0;
-    MListNode<T> *node = head;
+    MListNode<T> *node = d->head;
     MListNode<T> *previous = 0;
     do {
         if (!node) {
@@ -311,13 +328,14 @@ T MList<T>::pickAt(int index)
 
         if (i == index) {
             if (!previous) {
-                head = node->next;
+                d->head = node->next;
 
             } else {
                 previous->next = node->next;
             }
             T data = node->data;
             delete node;
+            d->size--;
             return data;
         }
 
@@ -330,23 +348,16 @@ T MList<T>::pickAt(int index)
 }
 
 template <typename T>
-void MList<T>::free()
-{
-    while ( !isEmpty() ) { removeFirst(); }
-}
-
-
-template <typename T>
 void MList<T>::clear()
 {
-    free();
+    d->free();
 }
 
 template <typename T>
 void MList<T>::print( std::ostream &out )const
 {
     int i = 0;
-    MListNode<T> *ptr = head;
+    MListNode<T> *ptr = d->head;
     while ( ptr != 0 ){
         out << ptr -> data << std::endl;
         ptr = ptr -> next;
