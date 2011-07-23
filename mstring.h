@@ -35,7 +35,6 @@ public:
     MString& operator+=(const MString&);
     bool operator==(const MString&);
 
-
     bool equals(const MString&) const;
     bool equalsIgnoreCase(const MString&) const;
     bool isEmpty() const;
