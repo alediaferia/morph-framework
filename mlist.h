@@ -1,6 +1,5 @@
 #include <iostream>
 
-
 #include "mshareddataptr.h"
 
 template <typename T>
@@ -29,10 +28,14 @@ template <typename T>
 class MList
 {
 public:
+    class ConstIterator;
+    class Iterator;
+
     MList();
     MList( const MList &source );
     ~MList();
     MList &operator=( const MList &right );
+    T& operator[](int index);
     void insert(int index, const T &item );
     void append( const T &item );
     T pickAt(int index);
@@ -40,21 +43,43 @@ public:
     void removeLast();
     void removeAll(T ele);
     void remove(T ele);
+    Iterator remove(const Iterator &it);
     bool isEmpty()const { return d->size == 0; }
     void print(std::ostream &out ) const;
     int size() const;
     void clear();
     T get(int i) const;
 
-private:
-    template<typename X>
-    class MListPrivate;
+    ConstIterator constBegin() const
+    {
+        ConstIterator it;
+        it.currentNode = d->head;
+        return it;
+    }
 
-    MSharedDataPtr<MListPrivate<T> > d;
+    ConstIterator constEnd() const
+    {
+        return ConstIterator();
+    }
+
+    Iterator begin() const
+    {
+        Iterator it;
+        it.currentNode = d->head;
+        return it;
+    }
+
+    Iterator end() const
+    {
+        return Iterator();
+    }
+
+private:
+    class MListPrivate;
+    MSharedDataPtr<MListPrivate> d;
 };
 
 template<typename T>
-template<typename X>
 class MList<T>::MListPrivate
 {
 public:
@@ -114,7 +139,7 @@ public:
 
 template<typename T>
 MList<T>::MList() :
-    d(new MListPrivate<T>(this))
+    d(new MListPrivate(this))
 {}
 
 template <class T>
@@ -209,6 +234,28 @@ template <typename T>
 MList<T>& MList<T>::operator= ( const MList &right )
 {
     d = right.d;
+}
+
+template<typename T>
+T& MList<T>::operator[](int index)
+{
+    if (index >= d->size) {
+        append(T());
+        return d->tail->data;
+    }
+
+    if (index == d->size - 1) {
+        return d->tail->data;
+    }
+
+    int i = 0;
+    MListNode<T> *node = d->head;
+    while (i < index) {
+        node = node->next;
+        i++;
+    }
+
+    return node->data;
 }
 
 template<typename T>
@@ -329,7 +376,6 @@ T MList<T>::pickAt(int index)
         if (i == index) {
             if (!previous) {
                 d->head = node->next;
-
             } else {
                 previous->next = node->next;
             }
@@ -364,6 +410,98 @@ void MList<T>::print( std::ostream &out )const
         i++;
     }
 }
+
+template<typename T>
+class MList<T>::ConstIterator
+{
+public:
+    ConstIterator() :
+        currentNode(0)
+    {}
+
+    ConstIterator(const ConstIterator &copy) :
+        currentNode(copy.currentNode)
+    {}
+
+    ConstIterator& operator++()
+    {
+        if (!currentNode) {
+            return ConstIterator();
+        }
+
+        currentNode = currentNode->next;
+        return *this;
+    }
+
+    const T& value() const
+    {
+        if (!currentNode) {
+            return T();
+        }
+
+        return currentNode->data;
+    }
+
+    bool operator==(const ConstIterator& other) const
+    {
+        return currentNode == other.currentNode;
+    }
+
+    bool operator!= (const ConstIterator &other) const
+    {
+        return !operator==(other);
+    }
+
+private:
+    MListNode<T> *currentNode;
+    friend class MList<T>;
+};
+
+template<typename T>
+class MList<T>::Iterator
+{
+public:
+    Iterator() :
+        currentNode(0)
+    {}
+
+    Iterator(const Iterator &copy) :
+        currentNode(copy.currentNode)
+    {}
+
+    Iterator& operator++()
+    {
+        if (!currentNode) {
+            return Iterator();
+        }
+
+        currentNode = currentNode->next;
+        return *this;
+    }
+
+    T& value()
+    {
+        if (!currentNode) {
+            return T();
+        }
+
+        return currentNode->data;
+    }
+
+    bool operator==(const Iterator& other) const
+    {
+        return currentNode == other.currentNode;
+    }
+
+    bool operator!= (const Iterator &other) const
+    {
+        return !operator==(other);
+    }
+
+private:
+    MListNode<T> *currentNode;
+    friend class MList<T>;
+};
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const MList<T>& list) {
