@@ -2,9 +2,10 @@
 
 #include "mevent_p.h"
 
-MEvent::MEvent() :
+MEvent::MEvent(MEvent::Type type) :
     d(new MEventPrivate(this))
 {
+    d->type = type;
 }
 
 MEvent::~MEvent()

@@ -1,10 +1,14 @@
 #ifndef MTHREAD_H
 #define MTHREAD_H
 
-class MThread
+#include "mobject.h"
+
+class MThread : public MObject
 {
 public:
-    MThread();
+    M_OBJECT(MThread)
+
+    MThread(MObject *parent);
     ~MThread();
 
     void start();

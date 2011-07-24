@@ -387,7 +387,6 @@ T MList<T>::pickAt(int index)
         if (i == index) {
             if (!node->previous) {
                 d->head = node->next;
-                d->head->previous = 0;
             } else {
                 node->next->previous = node->previous;
                 node->previous->next = node->next;

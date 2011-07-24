@@ -7,9 +7,10 @@
 
 class MObjectDelegate;
 class PropertyContainer;
-
 class MObject;
 typedef MSharedPtr<MObject> mref;
+
+class MEvent;
 
 /**
  * @class MObject is the base class
@@ -28,6 +29,8 @@ public:
     ~MObject();
 
     virtual bool copyable() const;
+
+    virtual bool processEvent(MEvent *event);
 
 private:
     class Private;

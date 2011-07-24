@@ -7,6 +7,7 @@ public:
     enum Type {
         UndefinedEvent,
         ApplicationStartedEvent,
+        ApplicationAboutToQuit,
         SocketDataReadyEvent,
         SocketConnectedEvent,
         RemoteRequestEvent,
@@ -15,14 +16,14 @@ public:
         User = 1500
     };
 
-    MEvent();
+    MEvent(Type);
     virtual ~MEvent();
 
     Type type() const;
 
 private:
     class MEventPrivate;
-    MEventPrivate const* d;
+    MEventPrivate * d;
 };
 
 #endif // MEVENT_H

@@ -36,7 +36,7 @@ void* runThread(void* mthread)
     return 0;
 }
 
-MThread::MThread() :
+MThread::MThread(MObject *parent) : MObject(parent),
     d(new MThreadPrivate(this))
 {
 }

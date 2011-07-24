@@ -6,22 +6,46 @@
 #include "mthread.h"
 #include "mutils.h"
 #include "mpair.h"
-
+#include "meventloop.h"
 #include "massociativearray.h"
+#include "mevent.h"
+
+class MyThread : public MThread
+{
+public:
+    MyThread(MObject *parent = 0) : MThread(parent),
+        m_count(0)
+    {}
+protected:
+    void run() {
+        while (m_count < 5) {
+            std::cout << m_count << std::endl;
+            m_count++;
+            sleep(1);
+        }
+
+        MEventLoop::globalEventLoop()->quitLater();
+    }
+
+private:
+    int m_count;
+};
 
 int main(int argc, char **argv)
 {
-    MAssociativeArray<MString, int> map;
+    mref object = new MObject;
+    MEventLoop *mainEventLoop = MEventLoop::globalEventLoop();
 
-    map.insert("antonio", 28);
-    map.insert("alessandro", 30);
-    map.insert("ruggiero", 24);
+    MEvent e(MEvent::ApplicationStartedEvent);
 
-    std::cout << "alessandro: " << map.value("alessandro") << std::endl;
+    mainEventLoop->sendEvent(object.data(), &e);
 
-    map["alessandro"] = 29;
+    MyThread *thread = new MyThread;
+    thread->start();
 
-    std::cout << "alessandro: " << map.value("alessandro") << std::endl;
+    mainEventLoop->run();
+
+    delete thread;
 
     return 0;
 }
