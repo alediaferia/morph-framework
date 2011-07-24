@@ -23,7 +23,8 @@ MObject::MObject(MObject *parent) :
 
 MObject::~MObject()
 {
-    //printf("%ld dying\n", (size_t)this);
+    //printf("Object %ld dying\n", (size_t)this);
+
     delete d;
 }
 

@@ -19,7 +19,6 @@ public:
 
     ~MyThread()
     {
-        mPrint("dying");
     }
 protected:
     void run() {
@@ -40,13 +39,15 @@ int main(int argc, char **argv)
 {
 
     MObject::MRef object = new MObject;
+    object->id = "object";
     MEventLoop *mainEventLoop = MEventLoop::globalEventLoop();
 
     MEvent e(MEvent::ApplicationStartedEvent);
 
-    mainEventLoop->sendEvent(object.data(), &e);
+    mainEventLoop->sendEvent(object, &e);
 
     MThread::MRef thread = new MyThread;
+    thread->id = "thread";
     thread->start();
 
     mainEventLoop->run();

@@ -1,6 +1,8 @@
 #ifndef MEVENTLOOP_H
 #define MEVENTLOOP_H
 
+#include "mobject.h"
+
 class MEvent;
 class MObject;
 
@@ -36,7 +38,7 @@ public:
      * as soon as all previous events
      * have been processed.
      */
-    void sendEvent(MObject *, MEvent*);
+    void sendEvent(mref, MEvent*);
 
     static MEventLoop* globalEventLoop();
 

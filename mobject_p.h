@@ -5,7 +5,7 @@
     class MRef : public MSharedPtr<MObject> \
     { \
     public: \
-        MRef(MObject* object) : \
+        MRef(MObject* object = 0) : \
             MSharedPtr<MObject>(object) \
         {} \
         MObject* operator->() const \
