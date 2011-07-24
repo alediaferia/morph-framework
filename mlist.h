@@ -11,7 +11,8 @@ class MListNode
 public:
     template<typename> friend class MList;
     MListNode() :
-        next(0)
+        next(0),
+        previous(0)
     {}
 
     MListNode(const MListNode &copy) :
@@ -22,6 +23,7 @@ public:
 private:
     T data;
     MListNode *next;
+    MListNode *previous;
 };
 
 template <typename T>
@@ -37,13 +39,25 @@ public:
     MList &operator=( const MList &right );
     T& operator[](int index);
     void insert(int index, const T &item );
-    void append( const T &item );
+    MList<T>& append( const T &item );
     T pickAt(int index);
     void removeFirst();
     void removeLast();
     void removeAll(T ele);
     void remove(T ele);
-    Iterator remove(const Iterator &it);
+
+    Iterator remove(const Iterator &it)
+    {
+        MListNode<T> *node = it.currentNode;
+        node->previous->next = node->next;
+
+        Iterator resultIt;
+        resultIt.currentNode = node->previous;
+        delete node;
+
+        return resultIt;
+    }
+
     bool isEmpty()const { return d->size == 0; }
     void print(std::ostream &out ) const;
     int size() const;
@@ -106,7 +120,9 @@ public:
         while (copyCurrent->next) {
             current->next = new MListNode<T>(*copyCurrent->next);
             copyCurrent = copyCurrent->next;
+            MListNode<T> *previous = current;
             current = current->next;
+            current->previous = previous;
         }
 
         tail = copyCurrent;
@@ -155,29 +171,25 @@ MList<T>::~MList()
 
 template<typename T>
 void MList<T>::removeAll(T ele){
-    MListNode<T>*prec;
     MListNode<T>*ptr;
-
     ptr=d->head;
-    if(d->head==0){
-        return;
-    }
 
-    while (ptr!=NULL){
+    while (ptr){
         if (ptr->data==ele){
             if (ptr==d->head){
-                d->head=d->head->next;
+                d->head=ptr->next;
                 d->size--;
                 delete ptr;
                 ptr=d->head;
+                ptr->previous = 0;
             }else{
-                prec->next=ptr->next;
+                ptr->previous->next=ptr->next;
                 d->size--;
-                delete ptr;
-                ptr=prec->next;
+                MListNode<T> *tmp = ptr;
+                ptr=ptr->next;
+                delete tmp;
             }
         }else{
-            prec=ptr;
             ptr=ptr->next;
         }
     }
@@ -185,30 +197,23 @@ void MList<T>::removeAll(T ele){
 
 template<typename T>
 void MList<T>::remove(T ele){
-    MListNode<T>*prec;
     MListNode<T>*ptr;
 
     ptr=d->head;
-    if(d->head==0){
-        return;
-    }
-
-    while (ptr!=NULL){
+    while (ptr){
         if (ptr->data==ele){
             if (ptr==d->head){
-                d->head=d->head->next;
+                d->head=ptr->next;
                 d->size--;
                 delete ptr;
-                ptr=d->head;
                 return;
             }else{
-                prec->next=ptr->next;
+                ptr->previous->next=ptr->next;
                 d->size--;
                 delete ptr;
-                ptr=prec->next;
+                return;
             }
         }else{
-            prec=ptr;
             ptr=ptr->next;
         }
     }
@@ -291,10 +296,13 @@ void MList<T>::insert(int i, const T &item )
             MListNode<T> *tmp=new MListNode<T>;
             tmp->data = item;
             tmp->next=ptr->next;
+            tmp->previous = ptr;
             ptr->next=tmp;
 
             if (tmp->next == 0) {
                 d->tail = tmp;
+            } else {
+                tmp->next->previous = tmp;
             }
 
             d->size++;
@@ -306,22 +314,25 @@ void MList<T>::insert(int i, const T &item )
 }
 
 template <typename T>
-void MList<T>::append( const T &item )
+MList<T>& MList<T>::append( const T &item )
 {
     if (isEmpty()){
-        MListNode<T> *node = new MListNode<T>;
+        MListNode<T> *node = new MListNode<T>();
         node->data = item;
         node->next = d->head;
         d->head = node;
         if ( d->tail == 0 ) { d->tail = node; }
         d->size++;
-        return;
+        return *this;
     }
     MListNode<T> *ptr = new MListNode<T>;
     ptr -> data = item;
-    d->tail -> next = ptr;
+    d->tail->next = ptr;
+    ptr->previous = d->tail;
     d->tail = ptr;
     d->size++;
+
+    return *this;
 }
 
 template <typename T>
@@ -332,8 +343,9 @@ void MList<T>::removeFirst()
     }
     MListNode<T> *ptr = d->head;
     d->head = d->head->next;
+    d->head->previous = 0;
     delete ptr;
-    if ( d->head == 0 ){
+    if ( d->head == 0 ) {
         d->tail = 0;
     }
 
@@ -349,14 +361,11 @@ void MList<T>::removeLast()
 
     if ( d->head == d->tail ) {
         removeFirst();
-    }else{
-        MListNode<T> *ptr = d->head;
-        while ( ptr -> next -> next != 0) {
-            ptr = ptr -> next;
-        }
-        delete d->tail;
-        d->tail = ptr;
-        d->tail -> next = 0;
+    } else {
+        MListNode<T> *node = d->tail;
+        d->tail = d->tail->previous;
+        delete node;
+        d->tail->next = 0;
     }
 
     d->size--;
@@ -367,25 +376,24 @@ T MList<T>::pickAt(int index)
 {
     int i = 0;
     MListNode<T> *node = d->head;
-    MListNode<T> *previous = 0;
     do {
         if (!node) {
             break;
         }
 
         if (i == index) {
-            if (!previous) {
+            if (!node->previous) {
                 d->head = node->next;
+                d->head->previous = 0;
             } else {
-                previous->next = node->next;
+                node->next->previous = node->previous;
+                node->previous->next = node->next;
             }
             T data = node->data;
             delete node;
             d->size--;
             return data;
         }
-
-        previous = node;
         node = node->next;
         i++;
     } while (i <= index);
@@ -426,19 +434,25 @@ public:
     ConstIterator& operator++()
     {
         if (!currentNode) {
-            return ConstIterator();
+            return *this;
         }
 
         currentNode = currentNode->next;
         return *this;
     }
 
-    const T& value() const
+    ConstIterator& operator--()
     {
         if (!currentNode) {
-            return T();
+            return *this;
         }
 
+        currentNode = currentNode->previous;
+        return *this;
+    }
+
+    const T& value() const
+    {
         return currentNode->data;
     }
 
@@ -472,19 +486,25 @@ public:
     Iterator& operator++()
     {
         if (!currentNode) {
-            return Iterator();
+            return *this;
         }
 
         currentNode = currentNode->next;
         return *this;
     }
 
-    T& value()
+    Iterator& operator--()
     {
         if (!currentNode) {
-            return T();
+            return *this;
         }
 
+        currentNode = currentNode->previous;
+        return *this;
+    }
+
+    T& value()
+    {
         return currentNode->data;
     }
 
