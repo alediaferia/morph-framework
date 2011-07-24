@@ -112,14 +112,13 @@ T& MAssociativeArray<K,T>::operator[](const K& key)
     typename MList<MPair<K,T> >::Iterator it = d->values.begin();
 
     for (; it != d->values.end(); ++it) {
-        MPair<K,T> &item = it.value();
-        if (item.left == key) {
-            return item.right;
+        if (it.value().left == key) {
+            return it.value().right;
         }
     }
 
-    d->values.append(MPair<K,T>(key, value));
-    return d->values[d->values.size() - 1];
+    d->values.append(MPair<K,T>(key, T()));
+    return d->values[d->values.size() - 1].right;
 }
 
 template<typename K, typename T>
