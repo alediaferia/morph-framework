@@ -3,9 +3,6 @@
 
 // public utility macros
 
-#include <vector>
-#include <utility>
-
 class InvokableMethod {
 public:
     virtual void invoke()
@@ -90,14 +87,22 @@ private:
     name(&_class::_setter,&_class::_getter, this)
 
 #define M_OBJECT(_name) \
-    template <typename X> \
-    struct PropTypeHelper { \
-        typedef MProperty<X> _name::*typed_prop_member; \
+    class MRef : public MObject::MRef \
+    { \
+    public: \
+        MRef(_name* object) : \
+            MObject::MRef(object) \
+        {} \
+        _name* operator->() const \
+        { \
+            return (_name*)MObject::MRef::operator ->(); \
+        } \
     }; \
     virtual const char* className() const { \
         static const char _className[] = #_name; \
         return _className; \
     } \
-    typedef MSharedPtr<_name> mref;
+
+#define M_UNUSED(var) (void*)(var);
 
 #endif // MOBJECT_MACROS_H

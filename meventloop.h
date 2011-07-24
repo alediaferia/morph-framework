@@ -29,6 +29,13 @@ public:
      */
     void quitLater();
 
+    /**
+     * Sends an event to the event queue
+     * for the given receiver.
+     * The event will be processed
+     * as soon as all previous events
+     * have been processed.
+     */
     void sendEvent(MObject *, MEvent*);
 
     static MEventLoop* globalEventLoop();

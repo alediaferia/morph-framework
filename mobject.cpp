@@ -35,14 +35,9 @@ bool MObject::copyable() const
 
 bool MObject::processEvent(MEvent *event)
 {
-    if (event->type() == MEvent::ApplicationAboutToQuit) {
-        std::cout << "oh no! application is about to quit! bye bye!" << std::endl;
-        return true;
-    }
+    M_UNUSED(event)
 
-    std::cout << "handling event " << event << "with type " << event->type() << std::endl;
-
-    return true;
+    return false;
 }
 
 /*void MObject::setNumber(int n)

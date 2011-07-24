@@ -4,6 +4,7 @@
 #include "mproperty_p.h"
 #include "mshareddataptr.h"
 #include "mobject_macros.h"
+#include "mobject_p.h"
 
 class MObjectDelegate;
 class PropertyContainer;
@@ -19,8 +20,8 @@ class MEvent;
  */
 class MObject {
 
-public:    
-    M_OBJECT(MObject)
+public:
+    M_OBJECT_PRIVATE
     M_PROPERTY(const char*, id)
     M_PROPERTY(int, number)
 
@@ -35,6 +36,5 @@ private:
     class Private;
     Private* const d;
 };
-
 
 #endif

@@ -39,20 +39,17 @@ private:
 int main(int argc, char **argv)
 {
 
-    MObject* object = new MObject;
+    MObject::MRef object = new MObject;
     MEventLoop *mainEventLoop = MEventLoop::globalEventLoop();
 
     MEvent e(MEvent::ApplicationStartedEvent);
 
-    mainEventLoop->sendEvent(object, &e);
+    mainEventLoop->sendEvent(object.data(), &e);
 
-    MThread *thread = new MyThread;
+    MThread::MRef thread = new MyThread;
     thread->start();
 
     mainEventLoop->run();
-
-    delete thread;
-    delete object;
 
     return 0;
 }
