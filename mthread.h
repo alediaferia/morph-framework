@@ -7,6 +7,7 @@ class MThread : public MObject
 {
 public:
     M_OBJECT(MThread)
+
     MThread(MObject *parent);
     ~MThread();
 

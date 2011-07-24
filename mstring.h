@@ -15,8 +15,6 @@
 
 #include "mshareddataptr.h"
 
-#include "macros_p.h"
-
 class MString {
 
 public: 

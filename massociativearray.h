@@ -31,10 +31,26 @@ public:
      * want to avoid this behavior.
      */
     void insert(const K &key, const T &value);
+
+    /**
+     * returns the value for the specified
+     * key. If no value is stored for the
+     * specified key a default-constructed
+     * one is returned
+     */
     T value(const K& key) const;
 
+    /**
+     * Returns a list for all the values
+     * stored with the specified key.
+     */
     MList<T> values(const K& key) const;
 
+    /**
+     * Takes the value for the specified
+     * key from the array and removes
+     * it from the container.
+     */
     T pick(const K& key);
     MList<T> pickAll(const K& key);
 
@@ -42,6 +58,13 @@ public:
 
     bool hasKey(const K& key) const;
 
+    /**
+     * Accesses the value identified by
+     * the specified key. If no value
+     * is present with the specified key default constructed
+     * one is inserted into the array and a reference
+     * to it is returned.
+     */
     T& operator[](const K& key);
 
 private:
