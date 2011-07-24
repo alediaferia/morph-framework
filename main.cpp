@@ -16,6 +16,11 @@ public:
     MyThread(MObject *parent = 0) : MThread(parent),
         m_count(0)
     {}
+
+    ~MyThread()
+    {
+        mPrint("dying");
+    }
 protected:
     void run() {
         while (m_count < 5) {
@@ -33,19 +38,21 @@ private:
 
 int main(int argc, char **argv)
 {
-    mref object = new MObject;
+
+    MObject* object = new MObject;
     MEventLoop *mainEventLoop = MEventLoop::globalEventLoop();
 
     MEvent e(MEvent::ApplicationStartedEvent);
 
-    mainEventLoop->sendEvent(object.data(), &e);
+    mainEventLoop->sendEvent(object, &e);
 
-    MyThread *thread = new MyThread;
+    MThread *thread = new MyThread;
     thread->start();
 
     mainEventLoop->run();
 
     delete thread;
+    delete object;
 
     return 0;
 }

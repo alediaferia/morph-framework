@@ -8,7 +8,6 @@
 class MObjectDelegate;
 class PropertyContainer;
 class MObject;
-typedef MSharedPtr<MObject> mref;
 
 class MEvent;
 
@@ -26,7 +25,7 @@ public:
     M_PROPERTY(int, number)
 
     MObject(MObject *parent = 0);
-    ~MObject();
+    virtual ~MObject();
 
     virtual bool copyable() const;
 

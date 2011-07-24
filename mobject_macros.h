@@ -97,6 +97,7 @@ private:
     virtual const char* className() const { \
         static const char _className[] = #_name; \
         return _className; \
-    }
+    } \
+    typedef MSharedPtr<_name> mref;
 
 #endif // MOBJECT_MACROS_H
