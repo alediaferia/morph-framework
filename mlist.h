@@ -1,3 +1,6 @@
+#ifndef MLIST_H
+#define MLIST_H
+
 #include <iostream>
 
 #include "mshareddataptr.h"
@@ -529,4 +532,4 @@ std::ostream& operator<<(std::ostream& os, const MList<T>& list) {
     return os;
 }
 
-
+#endif // MList

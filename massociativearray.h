@@ -45,55 +45,52 @@ public:
     T& operator[](const K& key);
 
 private:
-    template<typename K, typename V>
     class MAssociativeArrayPrivate;
-
-    MSharedDataPtr<MAssociativeArrayPrivate<K, V> > d;
+    MSharedDataPtr<MAssociativeArrayPrivate> d;
 };
 
-template<typename K, typename V>
-class MAssociativeArray::MAssociativeArrayPrivate
+template<typename K, typename T>
+class MAssociativeArray<K,T>::MAssociativeArrayPrivate
 {
 public:
-    MAssociativeArrayPrivate(MAssociativeArray<K, V> *m)
-        : m(m),
-          size(0)
+    MAssociativeArrayPrivate(MAssociativeArray<K,T> *m)
+        : m(m)
     {}
 
-    MAssociativeArrayPrivate(const MAssociativeArrayPrivate<K, V>& copy)
+    MAssociativeArrayPrivate(const MAssociativeArrayPrivate& copy)
         : m(copy.m),
           values(copy.values)
     {}
 
     MAssociativeArray *m;
-    MList<MPair<K, V> > values;
+    MList<MPair<K,T> > values;
 };
 
-template<typename K, typename V>
-MAssociativeArray<K,V>::MAssociativeArray() :
-    d(new MAssociativeArrayPrivate<K, V>(this))
+template<typename K, typename T>
+MAssociativeArray<K,T>::MAssociativeArray() :
+    d(new MAssociativeArrayPrivate(this))
 {
 }
 
-template<typename K, typename V>
-MAssociativeArray<K,V>::MArrociativeArray(const MAssociativeArray<K, V>& copy) :
+template<typename K, typename T>
+MAssociativeArray<K,T>::MAssociativeArray(const MAssociativeArray<K,T>& copy) :
     d(copy.d)
 {}
 
-template<typename K, typename V>
-MAssociativeArray<K,V>::~MAssociativeArray()
+template<typename K, typename T>
+MAssociativeArray<K,T>::~MAssociativeArray()
 {}
 
-template<typename K, typename V>
-int MAssociativeArray<K,V>::size() const
+template<typename K, typename T>
+int MAssociativeArray<K,T>::size() const
 {
     return d->values.size();
 }
 
-template<typename K, typename V>
-bool MAssociativeArray<K,V>::hasKey(const K &key) const
+template<typename K, typename T>
+bool MAssociativeArray<K,T>::hasKey(const K &key) const
 {
-    MList<MPair<K,V> >::ConstIterator it = d->values.constBegin();
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
     for (; it != d->values.constEnd(); ++it) {
         if (it.value().left == key) {
             return true;
@@ -103,48 +100,48 @@ bool MAssociativeArray<K,V>::hasKey(const K &key) const
     return false;
 }
 
-template<typename K, typename V>
-void MAssociativeArray<K,V>::insert(const K &key, const T &value)
+template<typename K, typename T>
+void MAssociativeArray<K,T>::insert(const K &key, const T &value)
 {
-    d->values.append(MPair<K, V>(key, value));
+    d->values.append(MPair<K,T>(key, value));
 }
 
-template<typename K, typename V>
-V& MAssociativeArray<K,V>::operator[](const K& key)
+template<typename K, typename T>
+T& MAssociativeArray<K,T>::operator[](const K& key)
 {
-    MList<MPair<K,V> >::Iterator it = d->values.begin();
+    typename MList<MPair<K,T> >::Iterator it = d->values.begin();
 
     for (; it != d->values.end(); ++it) {
-        MPair<K,V> &item = it.value();
+        MPair<K,T> &item = it.value();
         if (item.left == key) {
             return item.right;
         }
     }
 
-    d->values.append(MPair<K,V>(key, value));
+    d->values.append(MPair<K,T>(key, value));
     return d->values[d->values.size() - 1];
 }
 
-template<typename K, typename V>
-V MAssociativeArray<K,V>::value(const K &key) const
+template<typename K, typename T>
+T MAssociativeArray<K,T>::value(const K &key) const
 {
-    MList<MPair<K,V> >::ConstIterator it = d->values.constBegin();
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
 
     for (; it != d->values.constEnd(); ++it) {
-        MPair<K,V> &item = it.value();
+        MPair<K,T> item = it.value();
         if (item.left == key) {
             return item.right;
         }
     }
 
-    return V();
+    return T();
 }
 
-template<typename K, typename V>
-MList<V> MAssociativeArray<K, V>::values(const K& key) const
+template<typename K, typename T>
+MList<T> MAssociativeArray<K,T>::values(const K& key) const
 {
-    MList<V> list;
-    MList<MPair<K,V> >::ConstIterator it = d->values.constBegin();
+    MList<T> list;
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
     for (; it != d->values.end(); ++it) {
         if (it.value().left == key) {
             list.append(it.value().right);
@@ -154,19 +151,36 @@ MList<V> MAssociativeArray<K, V>::values(const K& key) const
     return list;
 }
 
-/*template<typename K, typename V>
-T MAssociativeArray<K,V>::pick(const K& key)
+template<typename K, typename T>
+T MAssociativeArray<K,T>::pick(const K& key)
 {
-    MList<MPair<K,V> >::ConstIterator it = d->values.constBegin();
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
     for (; it != d->values.end(); ++it) {
         if (it.value().left == key) {
-            list.append(it.value().right);
+            T data = it.value().right;
+            d->values.remove(it);
+            return data;
         }
     }
 
     return T();
-}*/
+}
 
-MList<T> pickAll(const K& key);
+template<typename K, typename T>
+MList<T> MAssociativeArray<K,T>::pickAll(const K& key)
+{
+    MList<T> list;
+
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
+    for (; it != d->values.end(); ++it) {
+        if (it.value().left == key) {
+            T data = it.value().right;
+            it = d->values.remove(it);
+            list.append(data);
+        }
+    }
+
+    return list;
+}
 
 #endif // MASSOCIATIVEARRAY_H

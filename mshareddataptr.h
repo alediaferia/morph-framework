@@ -1,7 +1,7 @@
 #ifndef MSHAREDDATAPTR_H
 #define MSHAREDDATAPTR_H
 
-#include "MSharedDataPtr.h"
+#include <iostream>
 
 /**
  * This class acts similarly to MSharedPtr
@@ -92,7 +92,7 @@ public:
             return;
         }
 
-        std::cout << "detaching..." << std::endl;
+        //std::cout << "detaching..." << std::endl;
         PrivateSharedPtr<T> *newDPtr = new PrivateSharedPtr<T>(this);
         newDPtr->ptr = (T*)malloc(sizeof(T));
         *newDPtr->ptr = *d->ptr;
@@ -115,10 +115,10 @@ private:
         void deref()
         {
             --this->refCount;
-            std::cout << "refcount " << this->refCount << std::endl;
+            //std::cout << "refcount " << this->refCount << std::endl;
 
             if(!this->refCount) {
-                std::cout << "freeing data" << std::endl;
+                //std::cout << "freeing data" << std::endl;
                 delete ptr;
                 delete this;
             }

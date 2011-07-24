@@ -5,13 +5,15 @@ template<typename V1, typename V2>
 class MPair
 {
 public:
+    MPair()
+    {}
     MPair(const V1 &left, const V2 &right);
     ~MPair();
 
-    V1& left;
-    V2& right;
+    V1 left;
+    V2 right;
 
-    MPair<V1, V2> operator=(const MPair<V1, V2> &other);
+    MPair<V1, V2>& operator=(const MPair<V1, V2> &other);
 };
 
 template<typename V1, typename V2>
