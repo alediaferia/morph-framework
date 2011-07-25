@@ -70,6 +70,7 @@ MString::MString() :
 }
 
 MString::~MString() {
+
 }
 
 void MString::print(std::ostream& os) const

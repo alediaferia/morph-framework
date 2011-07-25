@@ -78,7 +78,7 @@ public:
         return _value;
     }
     
-    virtual T operator++(int)
+    /*virtual T operator++(int)
     {
         _value++;
         return _value;
@@ -88,7 +88,7 @@ public:
     {
         _value--;
         return _value;
-    }
+    }*/
 
     virtual MVariable& operator=(const MVariable& variable)
     {

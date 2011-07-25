@@ -4,19 +4,33 @@
 #include "msocket.h"
 #include "mstring.h"
 
-class MServerSocket : private MSocket
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+class MServerSocket : public MSocket
 {
 public:
+    M_OBJECT(MServerSocket)
 
-    MServerSocket ( int port );
-    MServerSocket(){}
-    virtual ~MServerSocket();
+    MServerSocket();
+    ~MServerSocket();
 
-    const MServerSocket& operator << (  MString& ) const;
-    const MServerSocket& operator >> ( MString& ) const;
+    void start();
 
-    void accept ( MServerSocket& );
+    void addConnectionListener(mref listener);
 
+
+    MString read(int size);
+    int write(const MString &);
+
+protected:
+    void clientConnected(int clientSockD, sockaddr incomingAddress);
+
+private:
+    class MServerSocketPrivate;
+    MServerSocketPrivate *d;
+
+    friend class AcceptThread;
 };
 
 

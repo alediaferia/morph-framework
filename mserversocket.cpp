@@ -1,58 +1,102 @@
-
 #include "mserversocket.h"
-#include "mstring.h"
+#include "mlist.h"
+#include "mthread.h"
+#include "meventloop.h"
+#include "mevent.h"
 
-
-MServerSocket::MServerSocket ( int port )
+class AcceptThread : public MThread
 {
-    if ( ! MSocket::create() )
+public:
+    AcceptThread(int sockd, MServerSocket* server) : MThread(0),
+        sockd(sockd),
+        server(server)
+    {}
+
+private:
+    int sockd;
+    MServerSocket *server;
+    sockaddr incomingAddress;
+    int clientSocket;
+
+protected:
+    void run()
     {
-        std::cout<<"Error create"<<std::endl;
+        while (1) {
+           socklen_t size = sizeof(incomingAddress);
+           accept(sockd, &incomingAddress, &size);
+           server->clientConnected(clientSocket, incomingAddress);
+
+           sleep(1);
+        }
+    }
+};
+
+class MServerSocket::MServerSocketPrivate
+{
+public:
+    MServerSocketPrivate(MServerSocket *m)
+        : m(m),
+          acceptThread(0)
+    {
+        memset(&address, 0, sizeof(address));
     }
 
-    if ( ! MSocket::bind ( port ) )
+    ~MServerSocketPrivate()
     {
-        std::cout<<"Error bind"<<std::endl;
+        delete acceptThread;
     }
 
-    if ( ! MSocket::listen() )
-    {
-        std::cout<<"Error listen"<<std::endl;
-    }
+    MServerSocket *m;
+    MList<mref> listeners;
+    int sockd;
+    sockaddr_in address;
+    AcceptThread *acceptThread;
+};
+
+MServerSocket::MServerSocket() : MSocket(),
+    d(new MServerSocketPrivate(this))
+{
 
 }
 
 MServerSocket::~MServerSocket()
 {
+    delete d;
 }
 
-
-const MServerSocket& MServerSocket::operator << ( MString& s ) const
+void MServerSocket::addConnectionListener(mref listener)
 {
-    if ( ! MSocket::send (s.data()))
-    {
-        std::cout<<"Error send"<<std::endl;
-    }
-
-    return *this;
-
+    d->listeners.append(listener);
 }
 
-
-const MServerSocket& MServerSocket::operator >> ( MString& s ) const
+void MServerSocket::start()
 {
-    if ( ! MSocket::recv (s))
-    {
-        std::cout<<"Error receive"<<std::endl;
-    }
+    d->sockd = socket(AF_INET, SOCK_STREAM, 0);
+    d->address.sin_family = AF_INET;
+    d->address.sin_addr.s_addr = inet_addr(ip.value().toString().data());
+    d->address.sin_port = htons(port);
 
-    return *this;
+    bind(d->sockd, (const sockaddr*)&d->address, sizeof(d->address));
+
+    listen(d->sockd, 10);
+
+    d->acceptThread = new AcceptThread(d->sockd, this);
+    d->acceptThread->start();
+
+    std::cout << "server started" << std::endl;
+
 }
 
-void MServerSocket::accept ( MServerSocket& sock )
+void MServerSocket::clientConnected(int clientSockD, sockaddr incomingAddress)
 {
-    if ( ! MSocket::accept ( sock ) )
-    {
-        std::cout<<"Error accept"<<std::endl;
+    MList<mref>::ConstIterator it = d->listeners.constBegin();
+    for (; it != d->listeners.constEnd(); ++it) {
+        MEventLoop::globalEventLoop()->sendEvent(it.value(),new MEvent(MEvent::SocketConnectedEvent));
     }
 }
+
+MString MServerSocket::read(int size)
+{}
+
+int MServerSocket::write(const MString &)
+{}

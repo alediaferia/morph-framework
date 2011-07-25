@@ -5,6 +5,8 @@
 #include "mevent.h"
 #include "meventloop.h"
 
+#include "mutils.h"
+
 class MObject::Private {
 public:
     Private(MObject *m) :
@@ -36,7 +38,7 @@ bool MObject::copyable() const
 
 bool MObject::processEvent(MEvent *event)
 {
-    M_UNUSED(event)
+    mPrint("Trmon!");
 
     return false;
 }

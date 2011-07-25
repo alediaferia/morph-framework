@@ -82,6 +82,7 @@ void MEventLoop::run()
             // wait condition here
             // so the process does not
             // get all CPU while waiting
+            // for new events to come
             d->waitCondition.wait(&d->mutex);
         }
     }
