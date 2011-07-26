@@ -2,7 +2,7 @@
 #include <fcntl.h>
 
 
-MSocket::MSocket() : MObject(0)
+MSocket::MSocket() : MObject()
 {}
 
 MSocket::~MSocket()

@@ -11,58 +11,39 @@
 #include "mevent.h"
 #include "mserversocket.h"
 
-class Listener : public MObject
+class MyThread : public MThread
 {
 public:
-    M_OBJECT(Listener)
-    Listener()
+    M_OBJECT(MyThread)
+    MyThread() : MThread(),
+        m_count(5)
     {}
 
-    bool processEvent(MEvent *event) {
-        if (event->type() == MEvent::SocketConnectedEvent) {
-            mPrint("Someone connected!!");
-        }
-        return true;
-    }
-};
-
-class ServerInitializer : public MObject
-{
-public:
-    M_OBJECT(ServerInitializer)
-    ServerInitializer(mref listener) :
-        m_listener(listener)
-    {}
-
-    bool processEvent(MEvent *event)
+    static MyThread::MRef alloc()
     {
-        if (event->type() == MEvent::ApplicationStartedEvent) {
-            m_server.ip = MString("172.20.10.4");
-            m_server.port = 3400;
+        return MyThread::MRef(new MyThread);
+    }
 
-            m_server.addConnectionListener(m_listener);
-            m_server.start();
+protected:
+    void run() {
+        while (m_count > 0) {
+            std::cout << m_count << std::endl;
+            m_count--;
+            sleep(1);
         }
-
-        return true;
     }
 
 private:
-    MServerSocket m_server;
-    mref m_listener;
+    int m_count;
 };
 
 int main(int argc, char **argv)
 {
 
-    mref listener = new Listener;
-    mref initializer = new ServerInitializer(listener);
+    MyThread *t = new MyThread;
+    t->invokableByName("start")->invoke();
 
-    MEventLoop *mainLoop = MEventLoop::globalEventLoop();
-    MEvent startEvent(MEvent::ApplicationStartedEvent);
-    mainLoop->sendEvent(initializer, &startEvent);
-
-    mainLoop->run();
+    t->wait();
 
     return 0;
 }

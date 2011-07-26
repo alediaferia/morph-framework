@@ -8,7 +8,11 @@
         MRef(MObject* object = 0) : \
             MSharedPtr<MObject>(object) \
         {} \
-        MObject* operator->() const \
+        MRef(const MRef& copy) : MSharedPtr<MObject>(copy) \
+        {} \
+        virtual ~MRef() \
+        {} \
+        virtual MObject* operator->() const \
         { \
             return (MObject*)MSharedPtr<MObject>::operator ->(); \
         } \

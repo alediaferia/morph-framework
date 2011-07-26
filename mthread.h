@@ -8,7 +8,7 @@ class MThread : public MObject
 public:
     M_OBJECT(MThread)
 
-    MThread(MObject *parent);
+    MThread();
     ~MThread();
 
     void start();
@@ -17,6 +17,11 @@ public:
     bool finished() const;
 
     //static MThread* currentThread();
+
+    static MThread::MRef alloc()
+    {
+        return MThread::MRef(new MThread);
+    }
 
 protected:
     virtual void run();

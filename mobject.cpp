@@ -4,8 +4,13 @@
 #include "mobjectwatcher.h"
 #include "mevent.h"
 #include "meventloop.h"
+#include "massociativearray.h"
 
 #include "mutils.h"
+
+// TODO: use a faster container for
+//       invokables and add automated
+//       iterating-deletion functions for containers
 
 class MObject::Private {
 public:
@@ -13,10 +18,20 @@ public:
         m(m)
     {}
 
+    ~Private()
+    {
+        MList<InvokableMethod*> invokablesList = invokables.values();
+        MList<InvokableMethod*>::ConstIterator it = invokablesList.constBegin();
+        for (; it != invokablesList.constEnd(); ++it) {
+            delete it.value();
+        }
+    }
+
     MObject *m;
+    MAssociativeArray<const char*, InvokableMethod*> invokables;
 };
 
-MObject::MObject(MObject *parent) :
+MObject::MObject() :
     d(new Private(this)),
     M_SYNTHETIZE_PROPERTY(id),
     M_SYNTHETIZE_PROPERTY(number)
@@ -41,6 +56,20 @@ bool MObject::processEvent(MEvent *event)
     mPrint("Trmon!");
 
     return false;
+}
+
+void MObject::registerInvokable(InvokableMethod *invokable, const char *name)
+{
+    d->invokables[name] = invokable;
+}
+
+InvokableMethod* MObject::invokableByName(const char *name)
+{
+    if (!d->invokables.hasKey(name)) {
+        return 0;
+    }
+
+    return d->invokables.value(name);
 }
 
 /*void MObject::setNumber(int n)

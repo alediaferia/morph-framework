@@ -1,7 +1,7 @@
 #ifndef MOBJECT_MACROS_H
 #define MOBJECT_MACROS_H
 
-// public utility macros
+// public utility macros and classes
 
 class InvokableMethod {
 public:
@@ -16,11 +16,11 @@ public:
 // class that identifies a generic
 // invokable method that takes
 // no arguments
-// method f of type T is invoked on object of type C
+// method f of type T is invoked on object o of type C
 template<typename C, typename T>
 class InvokableMethod0 : public InvokableMethod {
 public:
-    InvokableMethod0(C* o, T f, const char *name) :
+    InvokableMethod0(C* o, T f) :
         o(o),
         f(f)
     {
@@ -38,7 +38,7 @@ private:
 template<typename C, typename T>
 class InvokableMethod1 : public InvokableMethod {
 public:
-    InvokableMethod1(C* o, T f, const char *name) :
+    InvokableMethod1(C* o, T f) :
         o(o),
         f(f)
     {
@@ -57,7 +57,7 @@ private:
 template<typename C, typename T>
 class InvokableMethod2 : public InvokableMethod {
 public:
-    InvokableMethod2(C* o, T f, const char *name) :
+    InvokableMethod2(C* o, T f) :
         o(o),
         f(f)
     {
@@ -87,21 +87,31 @@ private:
     name(&_class::_setter,&_class::_getter, this)
 
 #define M_OBJECT(_name) \
+    M_DEFINE_INVOKABLES(_name) \
     class MRef : public MObject::MRef \
     { \
     public: \
         MRef(_name* object) : \
             MObject::MRef(object) \
         {} \
-        _name* operator->() const \
+        virtual _name* operator->() const \
         { \
             return (_name*)MObject::MRef::operator ->(); \
         } \
+    private:\
+        _name* m_object;\
     }; \
     virtual const char* className() const { \
         static const char _className[] = #_name; \
         return _className; \
     } \
+
+#define M_DEFINE_INVOKABLES(_name) \
+    typedef void (_name::*M0ArgFunc)(); \
+    typedef InvokableMethod0<_name,M0ArgFunc> MInvokable0;
+
+#define M_REGISTER_INVOKABLE0(classname, name) \
+    registerInvokable(new MInvokable0(this, &classname::name), #name);
 
 #define M_UNUSED(var) (void*)(var);
 

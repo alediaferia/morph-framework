@@ -36,9 +36,10 @@ void* runThread(void* mthread)
     return 0;
 }
 
-MThread::MThread(MObject *parent) : MObject(parent),
+MThread::MThread() : MObject(),
     d(new MThreadPrivate(this))
 {
+    M_REGISTER_INVOKABLE0(MThread,start)
 }
 
 MThread::~MThread()

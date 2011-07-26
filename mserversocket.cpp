@@ -7,7 +7,7 @@
 class AcceptThread : public MThread
 {
 public:
-    AcceptThread(int sockd, MServerSocket* server) : MThread(0),
+    AcceptThread(int sockd, MServerSocket* server) : MThread(),
         sockd(sockd),
         server(server)
     {}

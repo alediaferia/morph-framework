@@ -33,12 +33,23 @@ public:
     M_PROPERTY(const char*, id)
     M_PROPERTY(int, number)
 
-    MObject(MObject *parent = 0);
+    MObject();
     virtual ~MObject();
 
     virtual bool copyable() const;
 
     virtual bool processEvent(MEvent *event);
+
+    InvokableMethod* invokableByName(const char *name);
+
+    static MObject::MRef alloc()
+    {
+        return MObject::MRef(new MObject);
+    }
+
+protected:
+    void registerInvokable(InvokableMethod *invokable, const char *name);
+    //void unregisterInvokable(const char *name); ??
 
 private:
     class Private;

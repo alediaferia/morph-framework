@@ -47,6 +47,11 @@ public:
     MList<T> values(const K& key) const;
 
     /**
+     * Returns all values in the array.
+     */
+    MList<T> values() const;
+
+    /**
      * Takes the value for the specified
      * key from the array and removes
      * it from the container.
@@ -200,6 +205,19 @@ MList<T> MAssociativeArray<K,T>::pickAll(const K& key)
             it = d->values.remove(it);
             list.append(data);
         }
+    }
+
+    return list;
+}
+
+template<typename K, typename T>
+MList<T> MAssociativeArray<K,T>::values() const
+{
+    MList<T> list;
+
+    typename MList<MPair<K,T> >::ConstIterator it = d->values.constBegin();
+    for (; it != d->values.constEnd(); ++it) {
+        list.append(it.value().right);
     }
 
     return list;

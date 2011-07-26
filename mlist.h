@@ -138,6 +138,9 @@ public:
 
     void free()
     {
+        if (!head) {
+            return;
+        }
         MListNode<T> *current = head;
         while (current->next) {
             MListNode<T> *tmp = current;
