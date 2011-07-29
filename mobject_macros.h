@@ -115,10 +115,21 @@ private:
 
 #define M_DEFINE_INVOKABLES(_name) \
     typedef void (_name::*M0ArgFunc)(); \
-    typedef InvokableMethod0<_name,M0ArgFunc> MInvokable0;
+    typedef InvokableMethod0<_name,M0ArgFunc> MInvokable0; \
+    typedef void (_name::*M1ArgFunc)(void*); \
+    typedef InvokableMethod1<_name,M1ArgFunc> MInvokable1;
 
 #define M_INVOKABLE0(classname, name) \
     new MInvokable0(this, &classname::name), #name
+
+#define M_INVOKABLE1(classname, name) \
+    new MInvokable1(this, (M1ArgFunc)&classname::name), #name
+
+#define M_INVOKABLE2(classname, name) \
+    new MInvokable2(this, &classname::name), #name
+
+#define M_ARG(name) \
+    (void*)name
 
 #define M_UNUSED(var) (void*)(var);
 
