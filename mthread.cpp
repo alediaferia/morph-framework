@@ -39,7 +39,7 @@ void* runThread(void* mthread)
 MThread::MThread() : MObject(),
     d(new MThreadPrivate(this))
 {
-    M_REGISTER_INVOKABLE0(MThread,start)
+    registerInvokable(M_INVOKABLE0(MThread, start));
 }
 
 MThread::~MThread()

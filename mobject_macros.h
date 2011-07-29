@@ -87,6 +87,14 @@ private:
     name(&_class::_setter,&_class::_getter, this)
 
 #define M_OBJECT(_name) \
+    M_RUNTIME_FACILITIES(_name) \
+    M_ALLOCABLE(_name) \
+
+#define M_UNALLOCABLE_OBJECT(_name) \
+    M_RUNTIME_FACILITIES(_name)
+
+#define M_RUNTIME_FACILITIES(_name) \
+    public:\
     M_DEFINE_INVOKABLES(_name) \
     class MRef : public MObject::MRef \
     { \
@@ -94,9 +102,9 @@ private:
         MRef(_name* object) : \
             MObject::MRef(object) \
         {} \
-        virtual _name* operator->() const \
+        _name* operator->() const \
         { \
-            return (_name*)MObject::MRef::operator ->(); \
+            return (_name*)data(); \
         } \
     private:\
         _name* m_object;\
@@ -106,12 +114,18 @@ private:
         return _className; \
     } \
 
+#define M_ALLOCABLE(_name)
+    static _name::MRef alloc() \
+    { \
+        return _name::MRef(new _name()); \
+    } \
+
 #define M_DEFINE_INVOKABLES(_name) \
     typedef void (_name::*M0ArgFunc)(); \
     typedef InvokableMethod0<_name,M0ArgFunc> MInvokable0;
 
-#define M_REGISTER_INVOKABLE0(classname, name) \
-    registerInvokable(new MInvokable0(this, &classname::name), #name);
+#define M_INVOKABLE0(classname, name) \
+    new MInvokable0(this, &classname::name), #name
 
 #define M_UNUSED(var) (void*)(var);
 

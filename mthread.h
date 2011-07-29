@@ -18,11 +18,6 @@ public:
 
     //static MThread* currentThread();
 
-    static MThread::MRef alloc()
-    {
-        return MThread::MRef(new MThread);
-    }
-
 protected:
     virtual void run();
 

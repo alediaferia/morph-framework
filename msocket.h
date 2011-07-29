@@ -4,8 +4,6 @@
 #include "mobject.h"
 class MSocket : public MObject
 {
-    M_OBJECT(MSocket)
-
     M_PROPERTY(MString, ip)
     M_PROPERTY(uint16_t, port)
 

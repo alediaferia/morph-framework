@@ -31,6 +31,24 @@ public:
     MAssociativeArray<const char*, InvokableMethod*> invokables;
 };
 
+// MObject::MRef
+
+MObject::MRef::MRef(MObject* object) :  MSharedPtr<MObject>(object)
+{}
+
+MObject::MRef::MRef(const MRef& copy) : MSharedPtr<MObject>(copy)
+{}
+
+MObject::MRef::~MRef()
+{}
+
+MObject* MObject::MRef::operator->() const
+{
+    return MSharedPtr<MObject>::operator->();
+}
+
+// end of MObject::MRef
+
 MObject::MObject() :
     d(new Private(this)),
     M_SYNTHETIZE_PROPERTY(id),
@@ -70,6 +88,11 @@ InvokableMethod* MObject::invokableByName(const char *name)
     }
 
     return d->invokables.value(name);
+}
+
+MObject::MRef MObject::alloc()
+{
+    return MObject::MRef(new MObject);
 }
 
 /*void MObject::setNumber(int n)

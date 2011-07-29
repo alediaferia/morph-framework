@@ -33,6 +33,14 @@ public:
     M_PROPERTY(const char*, id)
     M_PROPERTY(int, number)
 
+    class MRef : public MSharedPtr<MObject> {
+    public:
+        MRef(MObject* object = 0);
+        MRef(const MRef& copy);
+        virtual ~MRef();
+        virtual MObject* operator->() const;
+    };
+
     MObject();
     virtual ~MObject();
 
@@ -42,10 +50,7 @@ public:
 
     InvokableMethod* invokableByName(const char *name);
 
-    static MObject::MRef alloc()
-    {
-        return MObject::MRef(new MObject);
-    }
+    static MObject::MRef alloc();
 
 protected:
     void registerInvokable(InvokableMethod *invokable, const char *name);
