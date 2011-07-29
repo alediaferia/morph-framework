@@ -11,7 +11,6 @@ class PropertyContainer;
 class MObject;
 
 class MEvent;
-
 /**
  * @class MObject is the base class
  * for most of the Morph API.
@@ -44,17 +43,14 @@ public:
     MObject();
     virtual ~MObject();
 
-    virtual bool copyable() const;
-
     virtual bool processEvent(MEvent *event);
 
-    InvokableMethod* invokableByName(const char *name);
+    MInvokableMethod* invokableByName(const char *name);
 
     static MObject::MRef alloc();
 
 protected:
-    void registerInvokable(InvokableMethod *invokable, const char *name);
-    //void unregisterInvokable(const char *name); ??
+    void registerInvokable(MInvokableMethod *invokable, const char *name);
 
 private:
     class Private;

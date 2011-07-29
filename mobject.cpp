@@ -20,15 +20,15 @@ public:
 
     ~Private()
     {
-        MList<InvokableMethod*> invokablesList = invokables.values();
-        MList<InvokableMethod*>::ConstIterator it = invokablesList.constBegin();
+        MList<MInvokableMethod*> invokablesList = invokables.values();
+        MList<MInvokableMethod*>::ConstIterator it = invokablesList.constBegin();
         for (; it != invokablesList.constEnd(); ++it) {
             delete it.value();
         }
     }
 
     MObject *m;
-    MAssociativeArray<const char*, InvokableMethod*> invokables;
+    MAssociativeArray<const char*, MInvokableMethod*> invokables;
 };
 
 // MObject::MRef
@@ -63,12 +63,6 @@ MObject::~MObject()
     delete d;
 }
 
-bool MObject::copyable() const
-{
-    static const bool copyable = false;
-    return copyable;
-}
-
 bool MObject::processEvent(MEvent *event)
 {
     mPrint("Trmon!");
@@ -76,12 +70,16 @@ bool MObject::processEvent(MEvent *event)
     return false;
 }
 
-void MObject::registerInvokable(InvokableMethod *invokable, const char *name)
+void MObject::registerInvokable(MInvokableMethod *invokable, const char *name)
 {
+    // invokables cannot be overwritten
+    if (d->invokables.hasKey(name)) {
+        return;
+    }
     d->invokables[name] = invokable;
 }
 
-InvokableMethod* MObject::invokableByName(const char *name)
+MInvokableMethod* MObject::invokableByName(const char *name)
 {
     if (!d->invokables.hasKey(name)) {
         return 0;

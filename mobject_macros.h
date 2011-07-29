@@ -1,24 +1,17 @@
 #ifndef MOBJECT_MACROS_H
 #define MOBJECT_MACROS_H
 
+#include "minvokablemethod.h"
+
 // public utility macros and classes
 
-class InvokableMethod {
-public:
-    virtual void invoke()
-    {}
-    virtual void invoke(void *arg1)
-    {}
-    virtual void invoke(void *arg1, void* arg2)
-    {}
-};
 
 // class that identifies a generic
 // invokable method that takes
 // no arguments
 // method f of type T is invoked on object o of type C
 template<typename C, typename T>
-class InvokableMethod0 : public InvokableMethod {
+class InvokableMethod0 : public MInvokableMethod {
 public:
     InvokableMethod0(C* o, T f) :
         o(o),
@@ -36,7 +29,7 @@ private:
 };
 
 template<typename C, typename T>
-class InvokableMethod1 : public InvokableMethod {
+class InvokableMethod1 : public MInvokableMethod {
 public:
     InvokableMethod1(C* o, T f) :
         o(o),
@@ -55,7 +48,7 @@ private:
 };
 
 template<typename C, typename T>
-class InvokableMethod2 : public InvokableMethod {
+class InvokableMethod2 : public MInvokableMethod {
 public:
     InvokableMethod2(C* o, T f) :
         o(o),
@@ -114,7 +107,7 @@ private:
         return _className; \
     } \
 
-#define M_ALLOCABLE(_name)
+#define M_ALLOCABLE(_name) \
     static _name::MRef alloc() \
     { \
         return _name::MRef(new _name()); \

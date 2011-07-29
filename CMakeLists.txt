@@ -19,6 +19,7 @@ meventloop.cpp
 #marray.cpp
 #mdictionary.cpp
 massociativearray.cpp
+minvokablemethod.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})
