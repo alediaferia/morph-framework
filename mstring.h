@@ -19,6 +19,7 @@ class MString {
 
 public: 
     MString(const char *);
+    MString(const char *, int size);
     MString(const MString &);
     MString();
     ~MString();
@@ -39,7 +40,7 @@ public:
     bool startsWith(const MString&) const;
     bool endsWith(const MString&) const;
     bool contains (const MString&) const;
-    const char *data();
+    const char *data() const;
     int indexOf(const MString&) const;
 
     MString concat(const MString&);

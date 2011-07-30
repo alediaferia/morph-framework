@@ -38,18 +38,9 @@ public:
 
 };
 
-// TODO: bisogna chiarire nella documentazione
-// che questa funzione alloca nuova memoria
-// e che è responsabilità del chiamante
-// liberarla quando ha finito di usare l'array
-const char* MString::data() {
-    char *tmp = new char[strlen(d->str)];
-    int i;
-    for (i = 0; i < strlen(d->str); i++) {
-        tmp[i] = (d->str[i]);
-    }
-
-    return tmp;
+const char* MString::data() const 
+{
+    return d->str;
 }
 
 MString::MString(const char *str_array) :
@@ -57,6 +48,13 @@ MString::MString(const char *str_array) :
 {
     d->str = new char[strlen(str_array)];
     strcpy((char*) d->str, str_array);
+}
+
+MString::MString(const char *bytearray, int size) :
+    d(MSharedDataPtr<Private>(new Private(this)))
+{
+    d->str = new char[size];
+    memcpy((void*)d->str, bytearray, size);
 }
 
 MString::MString(const MString &copy) :

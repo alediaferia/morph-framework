@@ -78,6 +78,7 @@ void MEventLoop::run()
             MPair<mref, MEvent*> eventPair = d->eventQueue.dequeue();
             // process event here
             eventPair.left->processEvent(eventPair.right);
+            delete eventPair.right;
         } else {
             // wait condition here
             // so the process does not

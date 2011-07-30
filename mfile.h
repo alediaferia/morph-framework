@@ -1,20 +1,18 @@
 #ifndef MFILE_H
 #define MFILE_H
 
+#include "miodevice.h"
 
-class MFile
+class MFile : public MIODevice
 {
-
+    M_OBJECT(MFile)
 public:
-    void close() const;
-    void write(const char*);
-
-private:
     MFile();
-    friend class MFileManager;
-
+    bool open(const MString &path, int mode);
+    
 private:
-    int m_fd;
+    class MFilePrivate;
+    MFilePrivate *d;
 };
 
 #endif // MFILE_H

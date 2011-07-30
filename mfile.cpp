@@ -1,20 +1,29 @@
 #include "mfile.h"
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <iostream>
+#include "mfilemanager.h"
 
-
-MFile::MFile()
+class MFile::MFilePrivate
 {
+public:
+    MFilePrivate(MFile *m) :
+        m(m)
+    {}
+    
+    MFile *m;
+};
 
+MFile::MFile() : MIODevice(),
+    d(new MFilePrivate(this))
+{
 }
 
-void MFile::close() const{
-    ::close(m_fd);
-}
-
-void MFile::write(const char * std){
-    ssize_t bytes_written;
-    bytes_written = ::write(m_fd, std,strlen(std));
+bool MFile::open(const MString &path, int mode)
+{
+    const char *cstringpath = path.data();
+    int fd = MFileManager::defaultFileManager()->open(cstringpath, mode);
+    if (fd == -1) {
+        return false;
+    }
+    
+    setDescriptor(fd);
+    return true;
 }

@@ -2,22 +2,29 @@
 #define MFILEMANAGER_H
 
 #include "mfile.h"
+#include "mobject.h"
+#include "mlist.h"
+#include "miodevice.h"
 
-class MFileManager
+class MFileManager : public MObject
 {
+    M_UNALLOCABLE_OBJECT(MFileManager)
 public:
-    enum OpenMode {
-        ReadOnly=0x0001,
-        WriteOnly=0x0002,
-        Append=0x0004,
-        Truncate=0x0008,
-        ReadWrite=ReadOnly | WriteOnly
-    };
-
+    static MFileManager* defaultFileManager();
+    static void setDefaultFileManager(MFileManager::MRef fileManager);
+    
+    virtual int open(const char *path, int);
+    virtual bool rename(const char*, const char* );
+    virtual bool mkdir(const char* path);
+    virtual MList<MString> listDir(const char *path);
+    
+private:
+    static MFileManager::MRef s_instance;
+    class MFileManagerPrivate;
+    MFileManagerPrivate *d;
+    
+protected:
     MFileManager();
-
-    MFile* open(const char*, int);
-    void rename(const char*,const char* );
 };
 
 #endif // MFILEMANAGER_H

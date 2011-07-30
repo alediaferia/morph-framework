@@ -2,7 +2,7 @@
 #define MOBJECT_H
 
 #include "mproperty_p.h"
-#include "mshareddataptr.h"
+#include "msharedptr.h"
 #include "mobject_macros.h"
 #include "mobject_p.h"
 

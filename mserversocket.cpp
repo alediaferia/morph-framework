@@ -25,8 +25,6 @@ protected:
            socklen_t size = sizeof(incomingAddress);
            accept(sockd, &incomingAddress, &size);
            server->clientConnected(clientSocket, incomingAddress);
-
-           sleep(1);
         }
     }
 };
@@ -91,7 +89,7 @@ void MServerSocket::clientConnected(int clientSockD, sockaddr incomingAddress)
 {
     MList<mref>::ConstIterator it = d->listeners.constBegin();
     for (; it != d->listeners.constEnd(); ++it) {
-        MEventLoop::globalEventLoop()->sendEvent(it.value(),new MEvent(MEvent::SocketConnectedEvent));
+        MEventLoop::globalEventLoop()->sendEvent(it.value(), new MEvent(MEvent::SocketConnectedEvent));
     }
 }
 

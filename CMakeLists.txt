@@ -20,6 +20,9 @@ meventloop.cpp
 #mdictionary.cpp
 massociativearray.cpp
 minvokablemethod.cpp
+mfile.cpp
+mfilemanager.cpp
+miodevice.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})
