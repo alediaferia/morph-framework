@@ -15,7 +15,10 @@ public:
         ReadWrite=ReadOnly | WriteOnly
     };
 
+    virtual ~MIODevice();
+
     bool seek(off_t offset);
+    bool seekable() const;
     int descriptor() const;
 
     int write(const MString &data);
@@ -27,6 +30,8 @@ protected:
     MIODevice();
 
     void setDescriptor(int fd);
+    void setSeekable(bool seekable);
+
     virtual int readPlainData(char* buffer, size_t size);
     virtual int writePlainData(const char* buffer, size_t size);
 

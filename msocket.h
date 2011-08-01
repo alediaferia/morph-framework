@@ -1,17 +1,26 @@
 #ifndef MSOCKET_H
 #define MSOCKET_H
 
-#include "mobject.h"
-class MSocket : public MObject
-{
-    M_PROPERTY(MString, ip)
-    M_PROPERTY(uint16_t, port)
+#include "miodevice.h"
 
+class MSocket : public MIODevice
+{
+    M_OBJECT(MSocket)
+public:
     MSocket();
     virtual ~MSocket();
 
-    virtual MString read(int size) = 0;
-    virtual int write(const MString &) = 0;
+    void setAddress(const MString &address);
+    MString address() const;
+
+    void setPort(uint16_t port);
+    uint16_t port() const;
+
+    bool connect();
+
+private:
+    class MSocketPrivate;
+    MSocketPrivate *d;
 };
 
 #endif // MSOCKET_H

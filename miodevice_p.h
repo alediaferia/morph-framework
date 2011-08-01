@@ -4,11 +4,13 @@
 class MIODevice::MIODevicePrivate {
 public:
     MIODevicePrivate(MIODevice* m) :
-        m(m)
+        m(m),
+        fd(0)
     {}
 
     MIODevice *m;
     int fd;
+    bool seekable;
 };
 
 #endif // MIODEVICE_P_H

@@ -19,10 +19,6 @@ public:
 
     void addConnectionListener(mref listener);
 
-
-    MString read(int size);
-    int write(const MString &);
-
 protected:
     void clientConnected(int clientSockD, sockaddr incomingAddress);
 

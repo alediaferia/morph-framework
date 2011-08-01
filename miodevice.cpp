@@ -4,6 +4,13 @@
 MIODevice::MIODevice() :
     d(new MIODevicePrivate(this))
 {
+    d->seekable = true;
+}
+
+MIODevice::~MIODevice()
+{
+    close();
+    delete d;
 }
 
 void MIODevice::setDescriptor(int fd)
@@ -18,11 +25,19 @@ int MIODevice::descriptor() const
 
 int MIODevice::write(const MString &data)
 {
+    if (!d->fd) {
+        return 0;
+    }
+
     return writePlainData(data.data(), data.size());
 }
 
 bool MIODevice::seek(off_t offset)
 {
+    if (!seekable()) {
+        return false;
+    }
+
     if (lseek(d->fd, offset, SEEK_SET) == -1) {
         return false;
     }
@@ -30,8 +45,22 @@ bool MIODevice::seek(off_t offset)
     return true;
 }
 
+void MIODevice::setSeekable(bool seekable)
+{
+    d->seekable = seekable;
+}
+
+bool MIODevice::seekable() const
+{
+    return d->seekable;
+}
+
 MString MIODevice::read(int size)
 {
+    if (!d->fd) {
+        return MString();
+    }
+
     char buffer[size];
     int read = readPlainData(buffer, size);
 

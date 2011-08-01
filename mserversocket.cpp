@@ -71,8 +71,8 @@ void MServerSocket::start()
 {
     d->sockd = socket(AF_INET, SOCK_STREAM, 0);
     d->address.sin_family = AF_INET;
-    d->address.sin_addr.s_addr = inet_addr(ip.value().toString().data());
-    d->address.sin_port = htons(port);
+    d->address.sin_addr.s_addr = inet_addr(address().data());
+    d->address.sin_port = htons(port());
 
     bind(d->sockd, (const sockaddr*)&d->address, sizeof(d->address));
 
@@ -92,9 +92,3 @@ void MServerSocket::clientConnected(int clientSockD, sockaddr incomingAddress)
         MEventLoop::globalEventLoop()->sendEvent(it.value(), new MEvent(MEvent::SocketConnectedEvent));
     }
 }
-
-MString MServerSocket::read(int size)
-{}
-
-int MServerSocket::write(const MString &)
-{}
