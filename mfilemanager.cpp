@@ -2,6 +2,10 @@
 #include "fcntl.h"
 #include <sys/stat.h>
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/dir.h>
+#include <sys/param.h>
+#include <copyfile.h>
 
 MFileManager::MRef MFileManager::s_instance = MFileManager::MRef(0);
 
@@ -62,10 +66,35 @@ void MFileManager::setDefaultFileManager(MFileManager::MRef fileManager)
 
 bool MFileManager::mkdir(const char* path)
 {
-    return false;
+    if(::mkdir(path,0755)==-1){
+        return false;
+    }
+    return true;
 }
 
 MList<MString> MFileManager::listDir(const char *path)
 {
-    return MList<MString>();
+    struct dirent **files;
+    int count=0;
+    MList<MString> result;
+
+    count=::scandir(path,&files,NULL,NULL);
+
+    for(int i=0; i<count; i++){
+        result.append(files[i]->d_name);
+    }
+
+    return result;
+}
+
+
+bool MFileManager::copy(const char *from, const char *to){
+    copyfile_state_t state;
+    state = copyfile_state_alloc();
+
+    if(::copyfile(from,to,state,COPYFILE_ALL)==-1){
+        return false;
+    }
+
+    return true;
 }

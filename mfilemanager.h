@@ -9,6 +9,7 @@
 class MFileManager : public MObject
 {
     M_UNALLOCABLE_OBJECT(MFileManager)
+
 public:
     static MFileManager* defaultFileManager();
     static void setDefaultFileManager(MFileManager::MRef fileManager);
@@ -17,7 +18,8 @@ public:
     virtual bool rename(const char*, const char* );
     virtual bool mkdir(const char* path);
     virtual MList<MString> listDir(const char *path);
-    
+    virtual  bool copy(const char* from ,const char* to);
+
 private:
     static MFileManager::MRef s_instance;
     class MFileManagerPrivate;
