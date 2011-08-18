@@ -5,6 +5,7 @@
 #include "mevent.h"
 #include "meventloop.h"
 #include "massociativearray.h"
+#include "minvokablemethod.h"
 
 #include "mutils.h"
 
@@ -34,9 +35,6 @@ public:
 // MObject::MRef
 
 MObject::MRef::MRef(MObject* object) :  MSharedPtr<MObject>(object)
-{}
-
-MObject::MRef::MRef(const MRef& copy) : MSharedPtr<MObject>(copy)
 {}
 
 MObject::MRef::~MRef()

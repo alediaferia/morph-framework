@@ -5,6 +5,6 @@
     virtual const char* className() const { \
         static const char _className[] = "MObject"; \
         return _className; \
-    } \
+    }
 
 #endif // MOBJECT_P_H

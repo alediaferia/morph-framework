@@ -17,10 +17,17 @@ public:
 
     void start();
 
+    /**
+     * Connection listeners must be valid MObjects
+     * with an invokable method with the following
+     * signature: void clientConnected(MSocket::MRef clientSocket);
+     * @note: ownership of clientSocket is left to the receiving
+     * object
+     */
     void addConnectionListener(mref listener);
 
 protected:
-    void clientConnected(int clientSockD, sockaddr incomingAddress);
+    void clientConnected(int clientSockD, sockaddr_in incomingAddress);
 
 private:
     class MServerSocketPrivate;

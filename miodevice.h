@@ -26,10 +26,10 @@ public:
 
     bool close();
 
+    void setDescriptor(int fd);
 protected:
     MIODevice();
 
-    void setDescriptor(int fd);
     void setSeekable(bool seekable);
 
     virtual int readPlainData(char* buffer, size_t size);

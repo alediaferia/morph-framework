@@ -2,6 +2,7 @@
 #define MEVENTLOOP_H
 
 #include "mobject.h"
+#include "morph_defines.h"
 
 class MEvent;
 class MObject;

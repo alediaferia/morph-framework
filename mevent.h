@@ -23,7 +23,7 @@ public:
 
 private:
     class MEventPrivate;
-    MEventPrivate * d;
+    MEventPrivate *d;
 };
 
 #endif // MEVENT_H

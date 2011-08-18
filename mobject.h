@@ -6,11 +6,10 @@
 #include "mobject_macros.h"
 #include "mobject_p.h"
 
-class MObjectDelegate;
 class PropertyContainer;
-class MObject;
-
 class MEvent;
+class MInvokableMethod;
+
 /**
  * @class MObject is the base class
  * for most of the Morph API.
@@ -32,13 +31,7 @@ public:
     M_PROPERTY(const char*, id)
     M_PROPERTY(int, number)
 
-    class MRef : public MSharedPtr<MObject> {
-    public:
-        MRef(MObject* object = 0);
-        MRef(const MRef& copy);
-        virtual ~MRef();
-        virtual MObject* operator->() const;
-    };
+    class MRef;
 
     MObject();
     virtual ~MObject();
@@ -57,6 +50,13 @@ private:
     Private* const d;
 };
 
-typedef MObject::MRef mref;
+class MObject::MRef : public MSharedPtr<MObject> {
+public:
+    MRef(MObject* object = 0);
+    virtual ~MRef();
+    virtual MObject* operator->() const;
+};
+
+#include "minvokablemethod.h"
 
 #endif

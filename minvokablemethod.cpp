@@ -4,20 +4,20 @@
 void MInvokableMethod::invoke()
 {}
 
-void MInvokableMethod::invoke(void *arg1)
+void MInvokableMethod::invoke(mref ref)
 {
-    M_UNUSED(arg1);
+    M_UNUSED(ref);
 }
 
-void MInvokableMethod::invoke(void *arg1, void* arg2)
+void MInvokableMethod::invoke(mref ref1, mref ref2)
 {
-    M_UNUSED(arg1);
-    M_UNUSED(arg2);
+    M_UNUSED(ref1);
+    M_UNUSED(ref2);
 }
 
-void MInvokableMethod::invoke(void *arg1, void* arg2, void* arg3)
+void MInvokableMethod::invoke(mref ref1, mref ref2, mref ref3)
 {
-    M_UNUSED(arg1);
-    M_UNUSED(arg2);
-    M_UNUSED(arg3);
+    M_UNUSED(ref1);
+    M_UNUSED(ref2);
+    M_UNUSED(ref3);
 }

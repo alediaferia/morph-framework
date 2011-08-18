@@ -11,7 +11,7 @@ public:
     MThread();
     ~MThread();
 
-    void start();
+    M_INVOKABLE void start();
     void wait();
 
     bool finished() const;

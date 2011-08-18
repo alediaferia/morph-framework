@@ -1,71 +1,6 @@
 #ifndef MOBJECT_MACROS_H
 #define MOBJECT_MACROS_H
 
-#include "minvokablemethod.h"
-
-// public utility macros and classes
-
-
-// class that identifies a generic
-// invokable method that takes
-// no arguments
-// method f of type T is invoked on object o of type C
-template<typename C, typename T>
-class InvokableMethod0 : public MInvokableMethod {
-public:
-    InvokableMethod0(C* o, T f) :
-        o(o),
-        f(f)
-    {
-    }
-    void invoke()
-    {
-        (o->*f)();
-    }
-
-private:
-    C* o;
-    T f;
-};
-
-template<typename C, typename T>
-class InvokableMethod1 : public MInvokableMethod {
-public:
-    InvokableMethod1(C* o, T f) :
-        o(o),
-        f(f)
-    {
-    }
-
-    void invoke(void *arg1)
-    {
-        (o->*f)(arg1);
-    }
-
-private:
-    C* o;
-    T f;
-};
-
-template<typename C, typename T>
-class InvokableMethod2 : public MInvokableMethod {
-public:
-    InvokableMethod2(C* o, T f) :
-        o(o),
-        f(f)
-    {
-    }
-
-    void invoke(void *arg1, void* arg2)
-    {
-        (o->*f)(arg1, arg2);
-    }
-
-private:
-    C* o;
-    T f;
-};
-
 #define M_PROPERTY(type, name) \
     public: \
     MProperty<type> name;
@@ -116,21 +51,20 @@ private:
 #define M_DEFINE_INVOKABLES(_name) \
     typedef void (_name::*M0ArgFunc)(); \
     typedef InvokableMethod0<_name,M0ArgFunc> MInvokable0; \
-    typedef void (_name::*M1ArgFunc)(void*); \
+    typedef void (_name::*M1ArgFunc)(mref); \
     typedef InvokableMethod1<_name,M1ArgFunc> MInvokable1;
 
 #define M_INVOKABLE0(classname, name) \
     new MInvokable0(this, &classname::name), #name
 
 #define M_INVOKABLE1(classname, name) \
-    new MInvokable1(this, (M1ArgFunc)&classname::name), #name
+    new MInvokable1(this, &classname::name), #name
 
 #define M_INVOKABLE2(classname, name) \
     new MInvokable2(this, &classname::name), #name
 
-#define M_ARG(name) \
-    (void*)name
+#define M_INVOKABLE
 
-#define M_UNUSED(var) (void*)(var);
+#define M_UNUSED(var) (void)(var);
 
 #endif // MOBJECT_MACROS_H

@@ -4,6 +4,8 @@
 #include "meventloop.h"
 #include "mevent.h"
 
+static const char s_clientConnectedInvokable[] = "clientConnected";
+
 class AcceptThread : public MThread
 {
 public:
@@ -15,15 +17,14 @@ public:
 private:
     int sockd;
     MServerSocket *server;
-    sockaddr incomingAddress;
-    int clientSocket;
 
 protected:
     void run()
     {
         while (1) {
+           struct sockaddr_in incomingAddress;
            socklen_t size = sizeof(incomingAddress);
-           accept(sockd, &incomingAddress, &size);
+           int clientSocket = accept(sockd, (struct sockaddr*)&incomingAddress, &size);
            server->clientConnected(clientSocket, incomingAddress);
         }
     }
@@ -82,13 +83,16 @@ void MServerSocket::start()
     d->acceptThread->start();
 
     std::cout << "server started" << std::endl;
-
 }
 
-void MServerSocket::clientConnected(int clientSockD, sockaddr incomingAddress)
+void MServerSocket::clientConnected(int clientSockD, sockaddr_in incomingAddress)
 {
+    MSocket::MRef clientSocket = MSocket::alloc();
+    clientSocket->setDescriptor(clientSockD);
+    clientSocket->setPort(ntohs(incomingAddress.sin_port));
+    clientSocket->setAddress(inet_ntoa(incomingAddress.sin_addr));
+
     MList<mref>::ConstIterator it = d->listeners.constBegin();
     for (; it != d->listeners.constEnd(); ++it) {
-        MEventLoop::globalEventLoop()->sendEvent(it.value(), new MEvent(MEvent::SocketConnectedEvent));
     }
 }
