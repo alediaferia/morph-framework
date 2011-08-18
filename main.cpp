@@ -5,27 +5,33 @@
 #include "mserversocket.h"
 #include "meventloop.h"
 
-class Tester : public MObject
+class ConnectionController : public MObject
 {
-    M_OBJECT(Tester)
+    M_OBJECT(ConnectionController)
 public:
-    Tester()
+    ConnectionController()
     {
-        registerInvokable(M_INVOKABLE1(Tester, doTest));
+        registerInvokable(M_INVOKABLE1(ConnectionController, clientConnected));
     }
 
-    void doTest(mref serverSocket)
+    M_INVOKABLE void clientConnected(mref clientSocket)
     {
-        std::cout << "Doing test with " << serverSocket->className() << "!" << std::endl;
+        MSocket *socket = (MSocket*)clientSocket.data();
+        std::cout << "client with ip " << socket->address() << " connected." << std::endl;
     }
 };
 
 int main(int argc, char **argv)
 {
-    Tester::MRef tester = Tester::alloc();
+    MEventLoop eLoop;
+    MServerSocket::MRef server = MServerSocket::alloc();
+    server->setAddress("127.0.0.1");
+    server->setPort(3000);
 
-    MServerSocket::MRef serverSocket = MServerSocket::alloc();
-    tester->invokableByName("doTest")->invoke(serverSocket);
+    mref connectionController = ConnectionController::alloc();
+    server->addConnectionListener(connectionController);
 
-    return 0;
+    server->start();
+
+    eLoop.run();
 }

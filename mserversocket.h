@@ -20,7 +20,7 @@ public:
     /**
      * Connection listeners must be valid MObjects
      * with an invokable method with the following
-     * signature: void clientConnected(MSocket::MRef clientSocket);
+     * signature: void clientConnected(mref clientSocket);
      * @note: ownership of clientSocket is left to the receiving
      * object
      */

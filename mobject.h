@@ -58,5 +58,6 @@ public:
 };
 
 #include "minvokablemethod.h"
+#include "morph_defines.h"
 
 #endif

@@ -4,8 +4,6 @@
 #include "meventloop.h"
 #include "mevent.h"
 
-static const char s_clientConnectedInvokable[] = "clientConnected";
-
 class AcceptThread : public MThread
 {
 public:
@@ -94,5 +92,11 @@ void MServerSocket::clientConnected(int clientSockD, sockaddr_in incomingAddress
 
     MList<mref>::ConstIterator it = d->listeners.constBegin();
     for (; it != d->listeners.constEnd(); ++it) {
+        mref listener = it.value();
+        MInvokableMethod* method = listener->invokableByName("clientConnected");
+        if (!method) {
+            continue;
+        }
+        method->invoke(clientSocket);
     }
 }
