@@ -72,16 +72,16 @@ bool MFileManager::mkdir(const char* path)
     return true;
 }
 
-MList<MString> MFileManager::listDir(const char *path)
+MList::MRef MFileManager::listDir(const char *path)
 {
     struct dirent **files;
     int count=0;
-    MList<MString> result;
+    MList::MRef result = MList::alloc();
 
     count=::scandir(path,&files,NULL,NULL);
 
     for(int i=0; i<count; i++){
-        result.append(files[i]->d_name);
+        result->append(MString::alloc(files[i]->d_name));
     }
 
     return result;

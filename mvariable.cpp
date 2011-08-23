@@ -12,7 +12,7 @@ MVariable::MVariable(const MVariable &copy) :
 MVariable::MVariable(const char *data) :
     d(MSharedPtr<PrivateVariable>(new PrivateVariable(this)))
 {
-    d->initWithData<MString>((void*)data);
+    //d->initWithData<MString>((void*)data);
 }
 
 MVariable::MVariable(int data) :
@@ -46,11 +46,11 @@ MVariable::MVariable(char data) :
     d->initWithData<char>((void*)&data);
 }
 
-MVariable::MVariable(const MString &data) :
+/*MVariable::MVariable(const MString &data) :
     d(MSharedPtr<PrivateVariable>(new PrivateVariable(this)))
 {
     d->initWithData<MString>((void*)&data);
-}
+}*/
 
 MVariable::~MVariable()
 {
@@ -71,10 +71,10 @@ bool MVariable::isValid() const
     return d->valid;
 }
 
-MString MVariable::toString() const
+/*MString MVariable::toString() const
 {
     return value<MString>();
-}
+}*/
 
 int MVariable::toInt() const
 {

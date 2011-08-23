@@ -3,13 +3,14 @@
 
 #include "mmutex.h"
 
-class MWaitCondition
+class MWaitCondition : public MObject
 {
+    M_OBJECT(MWaitCondition)
 public:
     MWaitCondition();
     ~MWaitCondition();
 
-    bool wait(MMutex *mutex);
+    bool wait(MMutex::MRef mutex);
     void signal();
 
 private:

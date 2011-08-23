@@ -77,18 +77,6 @@ public:
     {
         return _value;
     }
-    
-    /*virtual T operator++(int)
-    {
-        _value++;
-        return _value;
-    }
-    
-    virtual T operator--(int)
-    {
-        _value--;
-        return _value;
-    }*/
 
     virtual MVariable& operator=(const MVariable& variable)
     {
@@ -164,7 +152,11 @@ public:
             return (_c->*_cg)();
         }
         
-        return (_c->*_g)();
+        if (_g) {
+            return (_c->*_g)();
+        }
+
+        return T();
     }
     
 private:

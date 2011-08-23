@@ -43,32 +43,48 @@ const char* MString::data() const
     return d->str;
 }
 
-MString::MString(const char *str_array) :
-    d(MSharedDataPtr<Private>(new Private(this)))
+MString::MString(const char *str_array) : MObject(),
+    d(new Private(this))
 {
     d->str = new char[strlen(str_array)];
     strcpy((char*) d->str, str_array);
 }
 
-MString::MString(const char *bytearray, int size) :
-    d(MSharedDataPtr<Private>(new Private(this)))
+MString::MString(const char *bytearray, int size) : MObject(),
+    d(new Private(this))
 {
     d->str = new char[size];
     memcpy((void*)d->str, bytearray, size);
 }
 
-MString::MString(const MString &copy) :
-    d(copy.d)
+MString::MString(const MString &copy) : MObject(),
+    d(new Private(*copy.d))
 {
 }
 
-MString::MString() :
- d(MSharedDataPtr<Private>(new Private(this)))
+MString::MString() : MObject(),
+ d(new Private(this))
 {
 }
 
-MString::~MString() {
+MString::~MString()
+{
+    delete d;
+}
 
+MString::MRef MString::alloc(const char *cstring)
+{
+    return MString::MRef(new MString(cstring));
+}
+
+MString::MRef MString::alloc(const char *buffer, int size)
+{
+    return MString::MRef(new MString(buffer, size));
+}
+
+MString::MRef MString::alloc(const MString &string)
+{
+    return MString::MRef(new MString(string));
 }
 
 void MString::print(std::ostream& os) const
@@ -91,22 +107,22 @@ int MString::length() const {
 /**
   Assigns other to this string and returns a reference to this string.
   */
-MString& MString::operator=(const MString& val) {
+/*MString& MString::operator=(const MString& val) {
     d = val.d;
     return *this;
-}
+}*/
 
 /**
  Returns true if string other is equal to this string; otherwise returns false.
   */
-bool MString::operator==(const MString& val) {
+/*bool MString::operator==(const MString& val) {
     return MString::equals(val);
-}
+}*/
 
 /**
  * Appends the string other onto the end of this string and returns a reference to this string.
  */
-MString& MString::operator +=(const MString& val) {
+/*MString& MString::operator +=(const MString& val) {
     int totalSize = strlen(d->str) + strlen(val.d->str);
     char *buffer = new char[totalSize + 1];
     strcpy(buffer, d->str);
@@ -114,7 +130,7 @@ MString& MString::operator +=(const MString& val) {
     delete[] d->str;
     d->str = buffer;
     return *this;
-}
+}*/
 /**
     Compares this string to the specified object.
     The result is true if and only if the argument is not null and is a String object
@@ -122,8 +138,8 @@ MString& MString::operator +=(const MString& val) {
     @param val anObject - the object to compare this String against.
     @return true if the String are equal; false otherwise.
 */
-bool MString::equals(const MString& val) const {
-    if (strcmp(d->str, val.d->str) == 0) {
+bool MString::equals(MString::MRef val) const {
+    if (strcmp(d->str, val->d->str) == 0) {
         return true;
     }
     return false;
@@ -133,9 +149,9 @@ bool MString::equals(const MString& val) const {
     @param val the String to compare this String against.
     @return true if the argument is not null and the Strings are equal, ignoring case; false otherwise.
 */
-bool MString::equalsIgnoreCase(const MString& val) const
+bool MString::equalsIgnoreCase(MString::MRef val) const
 {
-    if (toLowerCase().equals(val.toLowerCase())) {
+    if (toLowerCase()->equals(val->toLowerCase())) {
         return true;
     }
     return false;
@@ -145,14 +161,14 @@ bool MString::equalsIgnoreCase(const MString& val) const
   Converts all of the characters in this String to lower case using the rules of the default locale.
   @return the String, converted to lowercase.
   */
-MString MString::toLowerCase() const
+MString::MRef MString::toLowerCase() const
 {
     char *tmp = new char[strlen(d->str)];
     int i;
     for (i = 0; i < strlen(d->str); i++) {
         tmp[i] = tolower(d->str[i]);
     }
-    MString result(tmp);
+    MString::MRef result = MString::alloc(tmp);
 
     delete[] tmp;
     return result;
@@ -162,14 +178,14 @@ MString MString::toLowerCase() const
   Converts all of the characters in this String to upper case using the rules of the default locale.
   @return the String, converted to uppercase.
   */
-MString MString::toUpperCase() const
+MString::MRef MString::toUpperCase() const
 {
     char *tmp = new char[strlen(d->str)];
     int i;
     for (i = 0; i < strlen(d->str); i++) {
         tmp[i] = toupper(d->str[i]);
     }
-    MString result(tmp);
+    MString::MRef result = MString::alloc(tmp);
 
     delete[] tmp;
     return result;
@@ -183,15 +199,16 @@ MString MString::toUpperCase() const
   @param end the ending index, exclusive.
   @return the specified substring.
   */
-MString MString::substring(int begin, int count)
+MString::MRef MString::substring(int begin, int count)
 {
-    if (d->str == 0 || strlen(d->str) == 0 || strlen(d->str) < begin)
-        return *this;
+    if (d->str == 0 || strlen(d->str) == 0 || strlen(d->str) < begin) {
+        return MString::alloc(*this);
+    }
 
     char *tmp = (char*) malloc(strlen(d->str)-(begin + count));
     strncpy(tmp, d->str + begin, count);
 
-    MString result(tmp);
+    MString::MRef result = MString::alloc(tmp);
 
     delete[] tmp;
     return result;
@@ -203,24 +220,24 @@ MString MString::substring(int begin, int count)
   @param str2 the new character.
   @returns a string derived from this string by replacing every occurrence of oldChar with newChar.
   */
-MString MString::replace(const MString& str1, const MString& str2)
+MString::MRef MString::replace(MString::MRef str1, MString::MRef str2)
 {
     char *ret;
     int i = 0;
     int count = 0;
 
-    size_t newlen = strlen(str2.d->str);
-    size_t oldlen = strlen(str1.d->str);
+    size_t newlen = strlen(str2->d->str);
+    size_t oldlen = strlen(str1->d->str);
 
     for (i = 0; d->str[i] != '\0'; i++) {
-        if (strstr(&d->str[i], str1.d->str) == &d->str[i]) {
+        if (strstr(&d->str[i], str1->d->str) == &d->str[i]) {
             count++;
             i += oldlen - 1;
         }
     }
 
     if (!count) {
-        return *this;
+        return MString::alloc(*this);
     }
 
     const int length = i + count * (newlen - oldlen);
@@ -229,8 +246,8 @@ MString MString::replace(const MString& str1, const MString& str2)
     i = 0;
     int j = 0;
     for (; j < length; j++) {
-        if (strstr(&d->str[j], str1.d->str) == &d->str[j]) {
-            strcpy(&ret[j], str2.d->str);
+        if (strstr(&d->str[j], str1->d->str) == &d->str[j]) {
+            strcpy(&ret[j], str2->d->str);
             j += newlen - 1;
             i += oldlen;
             continue;
@@ -241,7 +258,7 @@ MString MString::replace(const MString& str1, const MString& str2)
     }
     ret[j] = '\0';
 
-    MString result(ret);
+    MString::MRef result = MString::alloc(ret);
     delete[] ret;
     return result;
 }
@@ -251,11 +268,11 @@ MString MString::replace(const MString& str1, const MString& str2)
   @param val a string to found
   @returns the index of the first occurrence of the character in the character sequence represented by this object, or -1 if the character does not occur.
   */
-int MString::indexOf(const MString& val) const
+int MString::indexOf(MString::MRef val) const
 {
     int i;
     for (i = 0; d->str[i] != '\0'; i++) {
-        if (strstr(&d->str[i], val.d->str) == &d->str[i]) {
+        if (strstr(&d->str[i], val->d->str) == &d->str[i]) {
             return i;
         }
     }
@@ -268,9 +285,9 @@ int MString::indexOf(const MString& val) const
   @param val string to analyze
   @returns true if the character sequence represented by the argument is a prefix of the character sequence represented by this string; false otherwise.
 */
-bool MString::startsWith(const MString& val) const
+bool MString::startsWith(MString::MRef val) const
 {
-    if (strncmp(d->str, val.d->str, strlen(val.d->str)) == 0) {
+    if (strncmp(d->str, val->d->str, strlen(val->d->str)) == 0) {
         return true;
 
     }
@@ -281,9 +298,9 @@ bool MString::startsWith(const MString& val) const
   @param val string to analyze
   @returns true true if the character sequence represented by the argument is a suffix of the character sequence represented by this object; false otherwise.
 */
-bool MString::endsWith(const MString& val) const
+bool MString::endsWith(MString::MRef val) const
 {
-    if (strncmp(&d->str[strlen((char*) d->str) - strlen(val.d->str)], val.d->str, strlen(val.d->str)) == 0) {
+    if (strncmp(&d->str[strlen((char*) d->str) - strlen(val->d->str)], val->d->str, strlen(val->d->str)) == 0) {
         return true;
     }
     return false;
@@ -306,13 +323,13 @@ bool MString::isEmpty() const
   @param val he String that is concatenated to the end of this String.
   @returns a string that represents the concatenation of this string.
   */
-MString MString::concat(const MString& val)
+MString::MRef MString::concat(MString::MRef val)
 {
-    int totalSize = strlen(d->str) + strlen(val.d->str);
+    int totalSize = strlen(d->str) + strlen(val->d->str);
     char *buffer = new char[totalSize];
     strcpy(buffer, d->str);
-    strcat(buffer, val.d->str);
-    MString result(buffer);
+    strcat(buffer, val->d->str);
+    MString::MRef result = MString::alloc(buffer);
     delete[] buffer;
     return result;
 }
@@ -323,14 +340,14 @@ MString MString::concat(const MString& val)
   @param the sequence to search for
   @returns true if this string contains s, false otherwise
 */
-bool MString::contains(const MString& val) const
+bool MString::contains(MString::MRef val) const
 {
     int i = 0;
     int count = 0;
 
-    size_t oldlen = strlen(val.d->str);
+    size_t oldlen = strlen(val->d->str);
     for (i = 0; d->str[i] != '\0'; i++) {
-        if (strstr(&d->str[i], val.d->str) == &d->str[i]) {
+        if (strstr(&d->str[i], val->d->str) == &d->str[i]) {
             count++;
             i += oldlen - 1;
         }
@@ -342,18 +359,33 @@ bool MString::contains(const MString& val) const
     return true;
 }
 
+bool MString::equals(const MObject::MRef &o) const
+{
+    if (strcmp(o->className(), "MString")) {
+        return false;
+    }
+
+    return this->equals((MString::MRef)o);
+}
+
 /**
  * 
  * @param os
  * @param mstr
  * @return 
  */
-std::ostream& operator<<(std::ostream& os, const MString& mstr) {
-    mstr.print(os);
+std::ostream& operator<<(std::ostream& os, MString::MRef mstr)
+{
+    mstr->print(os);
     return os;
 }
 
 void MString::clear()
 {
     d->clear();
+}
+
+MObject::MRef MString::toString() const
+{
+    return MString::alloc(*this);
 }

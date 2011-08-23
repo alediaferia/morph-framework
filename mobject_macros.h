@@ -27,12 +27,19 @@
     class MRef : public MObject::MRef \
     { \
     public: \
-        MRef(_name* object) : \
-            MObject::MRef(object) \
+        MRef(_name* object = 0) : MObject::MRef((MObject*)object), \
+            m_object(object) \
+        {} \
+        MRef(const MObject::MRef &copy) : MObject::MRef(copy), \
+            m_object((_name*)copy.data()) \
         {} \
         _name* operator->() const \
         { \
-            return (_name*)data(); \
+            return m_object; \
+        } \
+        _name* data() const \
+        { \
+            return m_object; \
         } \
     private:\
         _name* m_object;\

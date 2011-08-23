@@ -3,10 +3,11 @@ PROJECT(Morph)
 SET(Morph_SOURCES
 mobject.cpp
 main.cpp
-mobjectwatcher.cpp
-mvariable.cpp
+#mobjectwatcher.cpp
+#mvariable.cpp
 mstring.cpp
 mlist.cpp
+mpair.cpp
 mutils.cpp
 mthread.cpp
 mmutex.cpp
@@ -23,6 +24,8 @@ minvokablemethod.cpp
 mfile.cpp
 mfilemanager.cpp
 miodevice.cpp
+mcontainer.cpp
+mnumber.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})

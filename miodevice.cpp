@@ -55,16 +55,16 @@ bool MIODevice::seekable() const
     return d->seekable;
 }
 
-MString MIODevice::read(int size)
+MString::MRef MIODevice::read(int size)
 {
     if (!d->fd) {
-        return MString();
+        return MString::alloc();
     }
 
     char buffer[size];
     int read = readPlainData(buffer, size);
 
-    return MString(buffer, read);
+    return MString::alloc(buffer, read);
 }
 
 bool MIODevice::close()

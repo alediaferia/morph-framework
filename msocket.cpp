@@ -12,7 +12,7 @@ public:
 
     MSocket *m;
     uint16_t port;
-    MString address;
+    MString::MRef address;
 };
 
 MSocket::MSocket() : MIODevice(),
@@ -24,12 +24,12 @@ MSocket::~MSocket()
     delete d;
 }
 
-void MSocket::setAddress(const MString &address)
+void MSocket::setAddress(MString::MRef address)
 {
     d->address = address;
 }
 
-MString MSocket::address() const
+MString::MRef MSocket::address() const
 {
     return d->address;
 }
@@ -51,7 +51,7 @@ bool MSocket::connect()
     struct sockaddr_in address;
     memset(&address, 0, sizeof(sockaddr_in));
 
-    address.sin_addr.s_addr = inet_addr(d->address.data());
+    address.sin_addr.s_addr = inet_addr(d->address->data());
     address.sin_port = htons(d->port);
     address.sin_family = AF_INET;
 

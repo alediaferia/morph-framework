@@ -1,6 +1,5 @@
 #include "mwaitcondition.h"
 #include <pthread.h>
-
 #include "mmutex_p.h"
 
 class MWaitCondition::MWaitConditionPrivate
@@ -26,7 +25,7 @@ MWaitCondition::~MWaitCondition()
     delete d;
 }
 
-bool MWaitCondition::wait(MMutex *mutex)
+bool MWaitCondition::wait(MMutex::MRef mutex)
 {
     pthread_cond_wait(&d->nativeWaitCondition, &mutex->d->mutex);
 }

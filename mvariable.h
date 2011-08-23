@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <vector>
-#include "mstring.h"
+//#include "mstring.h"
 
 #include "msharedptr.h"
 
@@ -44,14 +44,14 @@ public:
     MVariable(unsigned long int);
     MVariable(char);
     MVariable(float);
-    MVariable(const MString &);
+   //MVariable(const MString &);
 
     ~MVariable();
 
     bool isEmpty() const;
     bool isValid() const;
 
-    MString toString() const;
+    //MString toString() const;
     int toInt() const;
     bool toBool() const;
 
@@ -121,7 +121,7 @@ M_DECLARE_INTERNAL_TYPE(unsigned int, MVariable::UnsignedInt)
 M_DECLARE_INTERNAL_TYPE(bool, MVariable::Bool)
 M_DECLARE_INTERNAL_TYPE(float, MVariable::Float)
 M_DECLARE_INTERNAL_TYPE(double, MVariable::Double)
-M_DECLARE_INTERNAL_TYPE(MString, MVariable::String)
+//M_DECLARE_INTERNAL_TYPE(MString, MVariable::String)
 
 
 

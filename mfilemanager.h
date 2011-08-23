@@ -17,7 +17,7 @@ public:
     virtual int open(const char *path, int);
     virtual bool rename(const char*, const char* );
     virtual bool mkdir(const char* path);
-    virtual MList<MString> listDir(const char *path);
+    virtual MList::MRef listDir(const char *path);
     virtual  bool copy(const char* from ,const char* to);
 
 private:

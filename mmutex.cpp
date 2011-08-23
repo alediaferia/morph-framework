@@ -3,7 +3,8 @@
 
 #include "mmutex_p.h"
 
-MMutex::MMutex() : d(new MMutexPrivate(this))
+MMutex::MMutex() : MObject(),
+    d(new MMutexPrivate(this))
 {
 }
 

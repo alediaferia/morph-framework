@@ -1,9 +1,7 @@
-#include "mfile.h"
-#include "mobject.h"
-#include "mevent.h"
-#include "msocket.h"
-#include "mserversocket.h"
+#include "mstring.h"
+#include "mlist.h"
 #include "meventloop.h"
+#include "mserversocket.h"
 
 class ConnectionController : public MObject
 {
@@ -16,16 +14,18 @@ public:
 
     M_INVOKABLE void clientConnected(mref clientSocket)
     {
-        MSocket *socket = (MSocket*)clientSocket.data();
-        std::cout << "client with ip " << socket->address() << " connected." << std::endl;
+        m_socketRef = clientSocket;
     }
+
+private:
+    mref m_socketRef;
 };
 
 int main(int argc, char **argv)
 {
     MEventLoop eLoop;
     MServerSocket::MRef server = MServerSocket::alloc();
-    server->setAddress("127.0.0.1");
+    server->setAddress(MString::alloc("127.0.0.1"));
     server->setPort(3000);
 
     mref connectionController = ConnectionController::alloc();

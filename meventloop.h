@@ -2,9 +2,8 @@
 #define MEVENTLOOP_H
 
 #include "mobject.h"
-#include "morph_defines.h"
+#include "mevent.h"
 
-class MEvent;
 class MObject;
 
 class MEventLoop
@@ -39,7 +38,7 @@ public:
      * as soon as all previous events
      * have been processed.
      */
-    void sendEvent(mref, MEvent*);
+    void sendEvent(mref, MEvent::MRef);
 
     static MEventLoop* globalEventLoop();
 

@@ -2,6 +2,7 @@
 #define MSOCKET_H
 
 #include "miodevice.h"
+#include "mstring.h"
 
 class MSocket : public MIODevice
 {
@@ -10,8 +11,8 @@ public:
     MSocket();
     virtual ~MSocket();
 
-    void setAddress(const MString &address);
-    MString address() const;
+    void setAddress(MString::MRef address);
+    MString::MRef address() const;
 
     void setPort(uint16_t port);
     uint16_t port() const;

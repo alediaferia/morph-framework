@@ -33,6 +33,7 @@ class MServerSocket::MServerSocketPrivate
 public:
     MServerSocketPrivate(MServerSocket *m)
         : m(m),
+          listeners(MList::alloc()),
           acceptThread(0)
     {
         memset(&address, 0, sizeof(address));
@@ -44,7 +45,7 @@ public:
     }
 
     MServerSocket *m;
-    MList<mref> listeners;
+    MList::MRef listeners;
     int sockd;
     sockaddr_in address;
     AcceptThread *acceptThread;
@@ -63,14 +64,14 @@ MServerSocket::~MServerSocket()
 
 void MServerSocket::addConnectionListener(mref listener)
 {
-    d->listeners.append(listener);
+    d->listeners->append(listener);
 }
 
 void MServerSocket::start()
 {
     d->sockd = socket(AF_INET, SOCK_STREAM, 0);
     d->address.sin_family = AF_INET;
-    d->address.sin_addr.s_addr = inet_addr(address().data());
+    d->address.sin_addr.s_addr = inet_addr(address()->data());
     d->address.sin_port = htons(port());
 
     bind(d->sockd, (const sockaddr*)&d->address, sizeof(d->address));
@@ -88,10 +89,10 @@ void MServerSocket::clientConnected(int clientSockD, sockaddr_in incomingAddress
     MSocket::MRef clientSocket = MSocket::alloc();
     clientSocket->setDescriptor(clientSockD);
     clientSocket->setPort(ntohs(incomingAddress.sin_port));
-    clientSocket->setAddress(inet_ntoa(incomingAddress.sin_addr));
+    clientSocket->setAddress(MString::alloc(inet_ntoa(incomingAddress.sin_addr)));
 
-    MList<mref>::ConstIterator it = d->listeners.constBegin();
-    for (; it != d->listeners.constEnd(); ++it) {
+    MList::ConstIterator it = d->listeners->constBegin();
+    for (; it != d->listeners->constEnd(); ++it) {
         mref listener = it.value();
         MInvokableMethod* method = listener->invokableByName("clientConnected");
         if (!method) {

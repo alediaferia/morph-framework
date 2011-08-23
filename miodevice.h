@@ -2,6 +2,7 @@
 #define MIODEVICE_H
 
 #include "mobject.h"
+#include "mstring.h"
 
 class MIODevice : public MObject
 {
@@ -22,7 +23,7 @@ public:
     int descriptor() const;
 
     int write(const MString &data);
-    MString read(int size);
+    MString::MRef read(int size);
 
     bool close();
 

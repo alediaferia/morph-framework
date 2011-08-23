@@ -10,7 +10,8 @@
  * Calling the wrong invoke method (aka the one not related
  * with the current invokable method) causes nothing to happen.
  */
-class MInvokableMethod {
+class MInvokableMethod
+{
 public:
     virtual void invoke();
     virtual void invoke(mref);

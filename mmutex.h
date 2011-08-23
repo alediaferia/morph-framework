@@ -1,8 +1,11 @@
 #ifndef MMUTEX_H
 #define MMUTEX_H
 
-class MMutex
+#include "mobject.h"
+
+class MMutex : public MObject
 {
+    M_OBJECT(MMutex)
 public:
     MMutex();
     ~MMutex();

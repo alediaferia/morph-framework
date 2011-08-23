@@ -15,14 +15,20 @@
 
 #include "mshareddataptr.h"
 
-class MString {
+#include "mobject.h"
 
-public: 
+class MString : public MObject
+{
+    M_OBJECT(MString)
+public:
     MString(const char *);
     MString(const char *, int size);
     MString(const MString &);
     MString();
     ~MString();
+
+    static MString::MRef alloc(const char*);
+    static MString::MRef alloc(const char *, int size);
 
     void print( std::ostream& os ) const;
     void clear();
@@ -30,31 +36,37 @@ public:
     int length() const;
 
     //Operator
-    MString& operator=(const MString&);
-    MString& operator+=(const MString&);
-    bool operator==(const MString&);
+    //MString& operator=(MString::MRef string);
+    //MString& operator+=(MString::MRef string);
+    //bool operator==(MString::MRef string);
 
-    bool equals(const MString&) const;
-    bool equalsIgnoreCase(const MString&) const;
+    bool equals(MString::MRef) const;
+    bool equalsIgnoreCase(MString::MRef) const;
     bool isEmpty() const;
-    bool startsWith(const MString&) const;
-    bool endsWith(const MString&) const;
-    bool contains (const MString&) const;
+    bool startsWith(MString::MRef) const;
+    bool endsWith(MString::MRef) const;
+    bool contains (MString::MRef) const;
     const char *data() const;
-    int indexOf(const MString&) const;
+    int indexOf(MString::MRef) const;
 
-    MString concat(const MString&);
-    MString substring(int begin,int end);
-    MString replace(const MString&,const MString&);
-    MString toLowerCase() const;
-    MString toUpperCase() const;
+    MString::MRef concat(MString::MRef string);
+    MString::MRef substring(int begin,int end);
+    MString::MRef replace(MString::MRef source, MString::MRef destination);
+    MString::MRef toLowerCase() const;
+    MString::MRef toUpperCase() const;
+
+    virtual bool equals(const MObject::MRef &) const;
+    virtual MObject::MRef toString() const;
+
+protected:
+    static MString::MRef alloc(const MString& string);
 
 private:
     class Private;
-    MSharedDataPtr<Private> d;
+    Private *d;
 };
 
-std::ostream& operator<<( std::ostream&, const MString&);
+std::ostream& operator<<( std::ostream&, MString::MRef);
 
 
 #endif

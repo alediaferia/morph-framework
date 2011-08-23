@@ -22,7 +22,7 @@ public:
     bool terminate;
     bool running;
     bool quitLater;
-    MQueue<MPair<mref,MEvent*> > eventQueue;
+    MQueue eventQueue;
     MMutex mutex;
     MWaitCondition waitCondition;
 };
@@ -37,10 +37,10 @@ MEventLoop* MEventLoop::globalEventLoop()
     return &s_globalEventLoop;
 }
 
-void MEventLoop::sendEvent(mref receiver, MEvent *event)
+void MEventLoop::sendEvent(mref receiver, MEvent::MRef event)
 {
     d->mutex.lock();
-    d->eventQueue.enqueue(MPair<mref, MEvent*>(receiver, event));
+    d->eventQueue.enqueue(MPair::alloc(receiver, event));
     d->waitCondition.signal();
     d->mutex.unlock();
 }
@@ -75,10 +75,9 @@ void MEventLoop::run()
         }
 
         if (!d->eventQueue.isEmpty()) {
-            MPair<mref, MEvent*> eventPair = d->eventQueue.dequeue();
+            MPair::MRef eventPair = d->eventQueue.dequeue();
             // process event here
-            eventPair.left->processEvent(eventPair.right);
-            delete eventPair.right;
+            eventPair->left->processEvent(eventPair->right);
         } else {
             // wait condition here
             // so the process does not

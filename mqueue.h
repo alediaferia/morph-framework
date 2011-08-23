@@ -3,27 +3,16 @@
 
 #include "mlist.h"
 
-template <typename T>
-class MQueue : public MList<T>
+class MQueue : public MList
 {
+    M_OBJECT(MQueue)
 public:
-    MQueue() : MList<T>()
-    {}
+    MQueue();
 
-    void enqueue(const T& t);
-    T dequeue();
+    void enqueue(mref t);
+    mref dequeue();
 };
 
-template <typename T>
-void MQueue<T>::enqueue(const T &t)
-{
-    this->append(t);
-}
 
-template <typename T>
-T MQueue<T>::dequeue()
-{
-    return this->pickAt(0);
-}
 
 #endif // MQUEUE_H

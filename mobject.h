@@ -7,7 +7,6 @@
 #include "mobject_p.h"
 
 class PropertyContainer;
-class MEvent;
 class MInvokableMethod;
 
 /**
@@ -28,34 +27,42 @@ class MObject {
 public:
     M_OBJECT_PRIVATE
 
-    M_PROPERTY(const char*, id)
-    M_PROPERTY(int, number)
+   // M_PROPERTY(const char*, id)
+   // M_PROPERTY(int, number)
 
     class MRef;
 
     MObject();
     virtual ~MObject();
 
-    virtual bool processEvent(MEvent *event);
+    virtual bool processEvent(MObject::MRef event);
+    virtual bool equals(const MObject::MRef &) const;
 
     MInvokableMethod* invokableByName(const char *name);
 
+    virtual MObject::MRef toString() const;
     static MObject::MRef alloc();
 
 protected:
-    void registerInvokable(MInvokableMethod *invokable, const char *name);
+    void registerInvokable(MInvokableMethod*, const char *name);
 
 private:
-    class Private;
-    Private* const d;
+    class MObjectPrivate;
+    MObjectPrivate* d;
 };
 
 class MObject::MRef : public MSharedPtr<MObject> {
 public:
     MRef(MObject* object = 0);
+    MRef(const MRef &ref);
     virtual ~MRef();
     virtual MObject* operator->() const;
+    virtual MObject* data() const;
+    virtual bool operator==(const MObject::MRef &object) const;
+    bool isNull() const;
 };
+
+std::ostream& operator<<(std::ostream&, MObject::MRef);
 
 #include "minvokablemethod.h"
 #include "morph_defines.h"
