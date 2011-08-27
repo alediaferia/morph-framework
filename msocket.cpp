@@ -1,4 +1,5 @@
 #include "msocket.h"
+#include "mnumber.h"
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -19,7 +20,7 @@ public:
     MString::MRef address;
     MList::MRef listeners;
 
-    static void socketThreadFunc(void *data)
+    static void* socketThreadFunc(void *data)
     {
         MSocket::MSocketPrivate *dptr = (MSocket::MSocketPrivate*)data;
         dptr->m->waitForReadyRead();
@@ -28,9 +29,11 @@ public:
             mref object = it.value();
             MInvokableMethod *invokable = object->invokableByName("readyRead");
             if (invokable) {
-
+                invokable->invoke(MNumber::alloc()->init(dptr->m->availableBytes()));
             }
         }
+
+        return 0;
     }
 };
 
@@ -81,8 +84,14 @@ bool MSocket::connect()
     return true;
 }
 
-bool MSocket::waitForReadyRead()
+bool MSocket::waitForReadyRead(bool synchronously)
 {
+    if (!synchronously) {
+        pthread_t waitThread;
+        pthread_create(&waitThread, 0, MSocket::MSocketPrivate::socketThreadFunc, d);
+        return true;
+    }
+
     fd_set socks;
 
     FD_ZERO(&socks);

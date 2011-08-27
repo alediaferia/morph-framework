@@ -26,7 +26,17 @@ public:
      */
     void addReadyReadListener(mref listener);
 
-    bool waitForReadyRead();
+    /**
+     * This method blocks the current thread
+     * until new data is available.
+     * If the parameter synchronously is false a
+     * dedicated thread will be created to wait and this
+     * method will immediately return true.
+     * As soon as new data is read to be read the invokable
+     * "readyRead" will be called on each registered listener.
+     * @see addReadyReadListener
+     */
+    bool waitForReadyRead(bool synchronously = true);
 
     ssize_t availableBytes() const;
 

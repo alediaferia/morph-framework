@@ -4,25 +4,32 @@
 #include "mserversocket.h"
 #include "mnumber.h"
 
-/*class ConnectionController : public MObject
+class ConnectionController : public MObject
 {
     M_OBJECT(ConnectionController)
 public:
     ConnectionController()
     {
         registerInvokable(M_INVOKABLE1(ConnectionController, clientConnected));
+        registerInvokable(M_INVOKABLE1(ConnectionController, readyRead));
     }
 
     M_INVOKABLE void clientConnected(mref clientSocket)
     {
         m_socketRef = clientSocket;
-        m_socketRef->waitForReadyRead();
-        std::cout << "socket ready to read " << m_socketRef->availableBytes() << " bytes." << std::endl;
+        m_socketRef->addReadyReadListener(_self);
+        m_socketRef->waitForReadyRead(false);
+        std::cout << "waiting for bytes ready" << std::endl;
+    }
+
+    M_INVOKABLE void readyRead(mref bytes)
+    {
+        std::cout << "ready to read " << ((MNumber::MRef)bytes)->intValue() << std::endl;
     }
 
 private:
     MSocket::MRef m_socketRef;
-};*/
+};
 
 class Test : public MObject
 {
@@ -48,9 +55,9 @@ private:
 
 int main(int argc, char **argv)
 {
-    /*MEventLoop eLoop;
+    MEventLoop eLoop;
     MServerSocket::MRef server = MServerSocket::alloc();
-    server->setAddress(MString::alloc("127.0.0.1"));
+    server->setAddress(MString::alloc()->init("127.0.0.1"));
     server->setPort(3000);
 
     mref connectionController = ConnectionController::alloc();
@@ -58,5 +65,5 @@ int main(int argc, char **argv)
 
     server->start();
 
-    eLoop.run();*/
+    eLoop.run();
 }

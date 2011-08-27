@@ -77,7 +77,7 @@ MObject::MObject() :
 
 MObject::~MObject()
 {
-    std::cout << "destroyed object" << std::endl;
+    //std::cout << "destroyed object" << std::endl;
     delete d;
 }
 
