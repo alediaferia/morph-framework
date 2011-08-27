@@ -2,8 +2,9 @@
 #include "mlist.h"
 #include "meventloop.h"
 #include "mserversocket.h"
+#include "mnumber.h"
 
-class ConnectionController : public MObject
+/*class ConnectionController : public MObject
 {
     M_OBJECT(ConnectionController)
 public:
@@ -15,15 +16,39 @@ public:
     M_INVOKABLE void clientConnected(mref clientSocket)
     {
         m_socketRef = clientSocket;
+        m_socketRef->waitForReadyRead();
+        std::cout << "socket ready to read " << m_socketRef->availableBytes() << " bytes." << std::endl;
     }
 
 private:
-    mref m_socketRef;
+    MSocket::MRef m_socketRef;
+};*/
+
+class Test : public MObject
+{
+    M_OBJECT(Test)
+public:
+    Test() : MObject(),
+        list(MList::alloc())
+    {}
+
+    ~Test()
+    {
+        std::cout << "Test dying" << std::endl;
+    }
+
+    void addSelf()
+    {
+        list->append(_self);
+    }
+
+private:
+    MList::MRef list;
 };
 
 int main(int argc, char **argv)
 {
-    MEventLoop eLoop;
+    /*MEventLoop eLoop;
     MServerSocket::MRef server = MServerSocket::alloc();
     server->setAddress(MString::alloc("127.0.0.1"));
     server->setPort(3000);
@@ -33,5 +58,5 @@ int main(int argc, char **argv)
 
     server->start();
 
-    eLoop.run();
+    eLoop.run();*/
 }

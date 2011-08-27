@@ -42,7 +42,8 @@
             return m_object; \
         } \
     private:\
-        _name* m_object;\
+        _name* m_object; \
+        friend class _name; \
     }; \
     virtual const char* className() const { \
         static const char _className[] = #_name; \
@@ -50,9 +51,16 @@
     } \
 
 #define M_ALLOCABLE(_name) \
+    private: \
+        _name::MRef _self; \
+    public: \
     static _name::MRef alloc() \
     { \
-        return _name::MRef(new _name()); \
+        _name* instance = new _name(); \
+        _name::MRef ret(instance); \
+        instance->_self = ret; \
+        instance->_self.deref(); \
+        return ret; \
     } \
 
 #define M_DEFINE_INVOKABLES(_name) \

@@ -19,6 +19,17 @@ public:
 
     bool connect();
 
+    /**
+     * Listeners will be notified when
+     * new data is ready to be read through
+     * invokable void readyRead(MNumber::MRef availableBytes);
+     */
+    void addReadyReadListener(mref listener);
+
+    bool waitForReadyRead();
+
+    ssize_t availableBytes() const;
+
 private:
     class MSocketPrivate;
     MSocketPrivate *d;

@@ -77,7 +77,7 @@ MObject::MObject() :
 
 MObject::~MObject()
 {
-    //std::cout << "destroyed object" << std::endl;
+    std::cout << "destroyed object" << std::endl;
     delete d;
 }
 
@@ -126,7 +126,7 @@ MObject::MRef MObject::toString() const
     char *stringRep = new char[classNameLength + strlen(instanceOf) + 18];
     sprintf(stringRep, "0x%lx%s%s", reinterpret_cast<unsigned long>(this), instanceOf, this->className());
 
-    mref string = MString::alloc(stringRep);
+    mref string = MString::alloc()->init(stringRep);
     delete[] stringRep;
 
     return string;

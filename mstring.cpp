@@ -43,27 +43,11 @@ const char* MString::data() const
     return d->str;
 }
 
-MString::MString(const char *str_array) : MObject(),
-    d(new Private(this))
-{
-    d->str = new char[strlen(str_array)];
-    strcpy((char*) d->str, str_array);
-}
-
-MString::MString(const char *bytearray, int size) : MObject(),
-    d(new Private(this))
-{
-    d->str = new char[size];
-    memcpy((void*)d->str, bytearray, size);
-}
-
-MString::MString(const MString &copy) : MObject(),
-    d(new Private(*copy.d))
+MString::MString(const MString &copy) : MObject()
 {
 }
 
-MString::MString() : MObject(),
- d(new Private(this))
+MString::MString() : MObject()
 {
 }
 
@@ -72,19 +56,32 @@ MString::~MString()
     delete d;
 }
 
-MString::MRef MString::alloc(const char *cstring)
+MString::MRef MString::init()
 {
-    return MString::MRef(new MString(cstring));
+    d = new Private(this);
+    return _self;
 }
 
-MString::MRef MString::alloc(const char *buffer, int size)
+MString::MRef MString::init(const char *cstring)
 {
-    return MString::MRef(new MString(buffer, size));
+    init();
+    d->str = new char[strlen(cstring)];
+    strcpy((char*) d->str, cstring);
+    return _self;
 }
 
-MString::MRef MString::alloc(const MString &string)
+MString::MRef MString::init(const char *buffer, int size)
 {
-    return MString::MRef(new MString(string));
+    init();
+    d->str = new char[size];
+    memcpy((void*)d->str, buffer, size);
+    return _self;
+}
+
+MString::MRef MString::init(MString::MRef copy)
+{
+    d = new Private(*copy->d);
+    return _self;
 }
 
 void MString::print(std::ostream& os) const
@@ -168,7 +165,7 @@ MString::MRef MString::toLowerCase() const
     for (i = 0; i < strlen(d->str); i++) {
         tmp[i] = tolower(d->str[i]);
     }
-    MString::MRef result = MString::alloc(tmp);
+    MString::MRef result = MString::alloc()->init(tmp);
 
     delete[] tmp;
     return result;
@@ -185,7 +182,7 @@ MString::MRef MString::toUpperCase() const
     for (i = 0; i < strlen(d->str); i++) {
         tmp[i] = toupper(d->str[i]);
     }
-    MString::MRef result = MString::alloc(tmp);
+    MString::MRef result = MString::alloc()->init(tmp);
 
     delete[] tmp;
     return result;
@@ -202,13 +199,13 @@ MString::MRef MString::toUpperCase() const
 MString::MRef MString::substring(int begin, int count)
 {
     if (d->str == 0 || strlen(d->str) == 0 || strlen(d->str) < begin) {
-        return MString::alloc(*this);
+        return _self;
     }
 
     char *tmp = (char*) malloc(strlen(d->str)-(begin + count));
     strncpy(tmp, d->str + begin, count);
 
-    MString::MRef result = MString::alloc(tmp);
+    MString::MRef result = MString::alloc()->init(tmp);
 
     delete[] tmp;
     return result;
@@ -237,7 +234,7 @@ MString::MRef MString::replace(MString::MRef str1, MString::MRef str2)
     }
 
     if (!count) {
-        return MString::alloc(*this);
+        return _self;
     }
 
     const int length = i + count * (newlen - oldlen);
@@ -258,7 +255,7 @@ MString::MRef MString::replace(MString::MRef str1, MString::MRef str2)
     }
     ret[j] = '\0';
 
-    MString::MRef result = MString::alloc(ret);
+    MString::MRef result = MString::alloc()->init(ret);
     delete[] ret;
     return result;
 }
@@ -329,7 +326,7 @@ MString::MRef MString::concat(MString::MRef val)
     char *buffer = new char[totalSize];
     strcpy(buffer, d->str);
     strcat(buffer, val->d->str);
-    MString::MRef result = MString::alloc(buffer);
+    MString::MRef result = MString::alloc()->init(buffer);
     delete[] buffer;
     return result;
 }
@@ -387,5 +384,5 @@ void MString::clear()
 
 MObject::MRef MString::toString() const
 {
-    return MString::alloc(*this);
+    return _self;
 }

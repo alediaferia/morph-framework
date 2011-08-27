@@ -64,7 +64,7 @@ MString::MRef MIODevice::read(int size)
     char buffer[size];
     int read = readPlainData(buffer, size);
 
-    return MString::alloc(buffer, read);
+    return MString::alloc()->init(buffer, read);
 }
 
 bool MIODevice::close()

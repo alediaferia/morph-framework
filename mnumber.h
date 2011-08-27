@@ -8,6 +8,18 @@ class MNumber : public MObject
     M_OBJECT(MNumber)
 public:
     MNumber();
+    ~MNumber();
+
+    MNumber::MRef init();
+    MNumber::MRef init(int);
+    MNumber::MRef init(unsigned int);
+    MNumber::MRef init(long);
+    MNumber::MRef init(long long);
+    MNumber::MRef init(unsigned long);
+    MNumber::MRef init(unsigned long long);
+    MNumber::MRef init(float);
+    MNumber::MRef init(double);
+    MNumber::MRef init(long double);
 
     void setIntValue(int);
     void setUnsignedIntValue(unsigned int);
@@ -16,6 +28,8 @@ public:
     void setUnsignedLongValue(unsigned long);
     void setUnsignedLongLongValue(unsigned long long);
     void setFloatValue(float);
+    void setDoubleValue(double);
+    void setLongDoubleValue(long double);
 
     int intValue() const;
     unsigned int unsignedIntValue() const;
@@ -24,8 +38,12 @@ public:
     unsigned long unsignedLongValue() const;
     unsigned long long unsignedLongLongValue() const;
     float floatValue() const;
+    double doubleValue() const;
+    long double longDoubleValue() const;
 
-
+private:
+    class MNumberPrivate;
+    MNumberPrivate *d;
 };
 
 #endif // MNUMBER_H

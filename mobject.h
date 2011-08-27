@@ -25,12 +25,11 @@ class MInvokableMethod;
 class MObject {
 
 public:
+    class MRef;
     M_OBJECT_PRIVATE
 
    // M_PROPERTY(const char*, id)
    // M_PROPERTY(int, number)
-
-    class MRef;
 
     MObject();
     virtual ~MObject();

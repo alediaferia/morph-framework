@@ -81,7 +81,7 @@ MList::MRef MFileManager::listDir(const char *path)
     count=::scandir(path,&files,NULL,NULL);
 
     for(int i=0; i<count; i++){
-        result->append(MString::alloc(files[i]->d_name));
+        result->append(MString::alloc()->init(files[i]->d_name));
     }
 
     return result;

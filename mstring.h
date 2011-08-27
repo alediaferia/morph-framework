@@ -21,14 +21,14 @@ class MString : public MObject
 {
     M_OBJECT(MString)
 public:
-    MString(const char *);
-    MString(const char *, int size);
     MString(const MString &);
     MString();
     ~MString();
 
-    static MString::MRef alloc(const char*);
-    static MString::MRef alloc(const char *, int size);
+    MString::MRef init();
+    MString::MRef init(const char*);
+    MString::MRef init(const char *buffer, int size);
+    MString::MRef init(MString::MRef copy);
 
     void print( std::ostream& os ) const;
     void clear();
@@ -57,9 +57,6 @@ public:
 
     virtual bool equals(const MObject::MRef &) const;
     virtual MObject::MRef toString() const;
-
-protected:
-    static MString::MRef alloc(const MString& string);
 
 private:
     class Private;

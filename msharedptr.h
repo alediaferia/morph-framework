@@ -84,6 +84,12 @@ public:
         return d->refCount;
     }
 
+protected:
+    void deref()
+    {
+        d->deref();
+    }
+
 private:
     template <typename X>
     class PrivateSharedPtr {

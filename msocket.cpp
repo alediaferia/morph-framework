@@ -2,17 +2,36 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
+#include <fcntl.h>
+#include "mlist.h"
 
 class MSocket::MSocketPrivate
 {
 public:
     MSocketPrivate(MSocket *m) :
-        m(m)
+        m(m),
+        listeners(MList::alloc())
     {}
 
     MSocket *m;
     uint16_t port;
     MString::MRef address;
+    MList::MRef listeners;
+
+    static void socketThreadFunc(void *data)
+    {
+        MSocket::MSocketPrivate *dptr = (MSocket::MSocketPrivate*)data;
+        dptr->m->waitForReadyRead();
+        MList::ConstIterator it = dptr->listeners->constBegin();
+        for (; it != dptr->listeners->constEnd(); ++it) {
+            mref object = it.value();
+            MInvokableMethod *invokable = object->invokableByName("readyRead");
+            if (invokable) {
+
+            }
+        }
+    }
 };
 
 MSocket::MSocket() : MIODevice(),
@@ -60,4 +79,43 @@ bool MSocket::connect()
     }
 
     return true;
+}
+
+bool MSocket::waitForReadyRead()
+{
+    fd_set socks;
+
+    FD_ZERO(&socks);
+    FD_SET(descriptor(), &socks);
+    int readySocks = select(descriptor() + 1, &socks, 0, 0, 0);
+
+    if (!readySocks) {
+        return false;
+    }
+
+    if (readySocks < 0) {
+        return false;
+    }
+
+    if (FD_ISSET(descriptor(), &socks)) {
+        return true;
+    }
+
+    return false;
+}
+
+ssize_t MSocket::availableBytes() const
+{
+    int available = -1;
+
+    if (ioctl(descriptor(), FIONREAD, &available) < 0) {
+        return -1;
+    }
+
+    return (ssize_t) available;
+}
+
+void MSocket::addReadyReadListener(mref listener)
+{
+    d->listeners->append(listener);
 }

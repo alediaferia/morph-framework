@@ -89,7 +89,7 @@ void MServerSocket::clientConnected(int clientSockD, sockaddr_in incomingAddress
     MSocket::MRef clientSocket = MSocket::alloc();
     clientSocket->setDescriptor(clientSockD);
     clientSocket->setPort(ntohs(incomingAddress.sin_port));
-    clientSocket->setAddress(MString::alloc(inet_ntoa(incomingAddress.sin_addr)));
+    clientSocket->setAddress(MString::alloc()->init(inet_ntoa(incomingAddress.sin_addr)));
 
     MList::ConstIterator it = d->listeners->constBegin();
     for (; it != d->listeners->constEnd(); ++it) {
