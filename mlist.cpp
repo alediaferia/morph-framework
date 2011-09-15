@@ -1,5 +1,26 @@
 #include "mlist.h"
 
+class MListNode
+{
+public:
+    friend class MList;
+    MListNode() :
+        next(0),
+        previous(0)
+    {}
+
+    MListNode(const MListNode &copy) :
+        data(copy.data),
+        next(copy.next)
+    {}
+
+private:
+    mref data;
+    MListNode *next;
+    MListNode *previous;
+};
+
+
 // ConstIterator
 
 MList::ConstIterator::ConstIterator() :

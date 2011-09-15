@@ -12,10 +12,6 @@
 #include <string>
 #include "mutils.h"
 
-// TODO: use a faster container for
-//       invokables and add automated
-//       iterating-deletion functions for containers
-
 class MObject::MObjectPrivate {
 public:
     MObjectPrivate(MObject *m) :
@@ -111,7 +107,16 @@ MInvokableMethod* MObject::invokableByName(const char *name)
 
 MObject::MRef MObject::alloc()
 {
-    return MObject::MRef(new MObject);
+    MObject* instance = new MObject();
+    MObject::MRef ret(instance);
+    instance->_self = ret;
+    instance->_self.deref();
+    return ret;
+}
+
+MObject::MRef MObject::init()
+{
+    return _self;
 }
 
 bool MObject::equals(const MObject::MRef &o) const

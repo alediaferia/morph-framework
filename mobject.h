@@ -21,15 +21,58 @@ class MInvokableMethod;
  * from anywhere. In addition to this, the specific
  * class ClassName::MRef is added automatically to the class
  * when using the M_OBJECT macro in the class definition.
+ * MObject::MRef or the typedef'd mref is a special type
+ * that can be used allover the framework and lets the programmer
+ * avoiding to specify the specific type of the object. This
+ * grants high flexibility but leaves the programmer with the responsibility
+ * of making sure that the right types are there under the hood since a lot
+ * is performed at runtime through type-casting.
+ *
+ * Usually, when making use of a class that inherits MObject, the typical
+ * approach to allocate an object is as follows:
+ * @code
+ * MObject::MRef object = MObject::alloc()->init();
+ * @endcode
+ *
+ * alloc() is a static method that comes for free in every MObject subclass
+ * thanks to the M_OBJECT macro. The method simply allocates new memory
+ * for the object itself and perform some additional tasks in order to initialize
+ * the _self object.
+ * The init method, instead, initializes the object with some additional tasking.
+ * Usually it should be preferred to leave the default alloc() implementation and
+ * perform the initialization phase inside the init method, including passing initialization
+ * parameters to the object.
+ * @note a special case for this is due to a C++ restriction: const member initialization
+ * must be performed inside constructor: in this case a custom alloc implementation must be
+ * written:
+ * @code
+        static MyObject::MRef alloc(int intParam)
+        {
+            MyObject* instance = new MyObject(intParam);
+            MyObject::MRef ret(instance);
+            instance->_self = ret;
+            instance->_self.deref();
+            return ret;
+        }
+ * @endcode
+ *
+ * The _self private member variable also comes for free in every MObject subclass
+ * and represents a reference to the object itself with 0-refcount. This means
+ * that it does not interfere with the MObject memory management policy.
+ *
+ * Memory management:
+ * Memory management with MObject subclasses is refcount-based. A wrapper around
+ * MObject subclasses instances pointers makes it possible to identify when an object
+ * is no longer referenced in order to automatically destroy it.
+ * In order for this to work, MObject::MRef or mref variables should always be preferred
+ * over direct pointers use.
  */
+
 class MObject {
 
 public:
     class MRef;
     M_OBJECT_PRIVATE
-
-   // M_PROPERTY(const char*, id)
-   // M_PROPERTY(int, number)
 
     MObject();
     virtual ~MObject();
@@ -41,11 +84,13 @@ public:
 
     virtual MObject::MRef toString() const;
     static MObject::MRef alloc();
+    virtual MObject::MRef init();
 
 protected:
     void registerInvokable(MInvokableMethod*, const char *name);
 
 private:
+    MObject::MRef _self;
     class MObjectPrivate;
     MObjectPrivate* d;
 };

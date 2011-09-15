@@ -55,15 +55,4 @@ private:
 
 int main(int argc, char **argv)
 {
-    MEventLoop eLoop;
-    MServerSocket::MRef server = MServerSocket::alloc();
-    server->setAddress(MString::alloc()->init("127.0.0.1"));
-    server->setPort(3000);
-
-    mref connectionController = ConnectionController::alloc();
-    server->addConnectionListener(connectionController);
-
-    server->start();
-
-    eLoop.run();
 }

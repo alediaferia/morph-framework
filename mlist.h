@@ -7,26 +7,7 @@
 #include "mshareddataptr.h"
 
 class MList;
-
-class MListNode
-{
-public:
-    friend class MList;
-    MListNode() :
-        next(0),
-        previous(0)
-    {}
-
-    MListNode(const MListNode &copy) :
-        data(copy.data),
-        next(copy.next)
-    {}
-
-private:
-    mref data;
-    MListNode *next;
-    MListNode *previous;
-};
+class MListNode;
 
 class MList : public MObject
 {
