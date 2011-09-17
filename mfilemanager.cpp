@@ -59,11 +59,6 @@ MFileManager* MFileManager::defaultFileManager()
     return (MFileManager*)MFileManager::s_instance.data();
 }
 
-void MFileManager::setDefaultFileManager(MFileManager::MRef fileManager)
-{
-    MFileManager::s_instance = fileManager;
-}
-
 bool MFileManager::mkdir(const char* path)
 {
     if(::mkdir(path,0755)==-1){

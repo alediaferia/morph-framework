@@ -41,6 +41,9 @@ public:
     double doubleValue() const;
     long double longDoubleValue() const;
 
+    mref toString() const;
+    mref copy() const;
+
 private:
     class MNumberPrivate;
     MNumberPrivate *d;

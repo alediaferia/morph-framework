@@ -26,6 +26,7 @@ mfilemanager.cpp
 miodevice.cpp
 mcontainer.cpp
 mnumber.cpp
+murl.cpp
 )
 #ADD_LIBRARY(morph SHARED ${Morph_SOURCES})
 ADD_EXECUTABLE(morph ${Morph_SOURCES})

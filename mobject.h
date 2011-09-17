@@ -71,7 +71,17 @@ class MInvokableMethod;
 class MObject {
 
 public:
-    class MRef;
+    class MRef : public MSharedPtr<MObject> {
+        public:
+            MRef(MObject* object = 0);
+            MRef(const MRef &ref);
+            virtual ~MRef();
+            virtual MObject* operator->() const;
+            virtual MObject* data() const;
+            virtual bool operator==(const MObject::MRef &object) const;
+            bool isNull() const;
+            void deref();
+        };
     M_OBJECT_PRIVATE
 
     MObject();
@@ -84,7 +94,9 @@ public:
 
     virtual MObject::MRef toString() const;
     static MObject::MRef alloc();
-    virtual MObject::MRef init();
+    MObject::MRef init();
+
+    virtual MObject::MRef copy() const;
 
 protected:
     void registerInvokable(MInvokableMethod*, const char *name);
@@ -93,17 +105,6 @@ private:
     MObject::MRef _self;
     class MObjectPrivate;
     MObjectPrivate* d;
-};
-
-class MObject::MRef : public MSharedPtr<MObject> {
-public:
-    MRef(MObject* object = 0);
-    MRef(const MRef &ref);
-    virtual ~MRef();
-    virtual MObject* operator->() const;
-    virtual MObject* data() const;
-    virtual bool operator==(const MObject::MRef &object) const;
-    bool isNull() const;
 };
 
 std::ostream& operator<<(std::ostream&, MObject::MRef);

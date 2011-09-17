@@ -12,13 +12,12 @@ class MFileManager : public MObject
 
 public:
     static MFileManager* defaultFileManager();
-    static void setDefaultFileManager(MFileManager::MRef fileManager);
     
     virtual int open(const char *path, int);
     virtual bool rename(const char*, const char* );
     virtual bool mkdir(const char* path);
     virtual MList::MRef listDir(const char *path);
-    virtual  bool copy(const char* from ,const char* to);
+    virtual bool copy(const char* from ,const char* to);
 
 private:
     static MFileManager::MRef s_instance;

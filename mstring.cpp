@@ -364,6 +364,11 @@ bool MString::equals(const MObject::MRef &o) const
     return this->equals((MString::MRef)o);
 }
 
+mref MString::copy() const
+{
+    return MString::alloc()->init(_self);
+}
+
 /**
  * 
  * @param os

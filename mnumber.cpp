@@ -1,4 +1,5 @@
 #include "mnumber.h"
+#include "mstring.h"
 
 class MNumber::MNumberPrivate
 {
@@ -183,4 +184,27 @@ unsigned long long MNumber::unsignedLongLongValue() const
 unsigned long MNumber::unsignedLongValue() const
 {
     return d->value;
+}
+
+mref MNumber::toString() const
+{
+    int digitCount = 0;
+    int v = d->value;
+    while (v > 0) {
+        v = v / 10;
+        digitCount++;
+    }
+
+    // not working: cast by correct type
+    char *str = new char[digitCount + 1];
+    sprintf(str, "%d", d->value);
+    MString::MRef string = MString::alloc()->init(str);
+    delete[] str;
+
+    return string;
+}
+
+mref MNumber::copy() const
+{
+    return MNumber::alloc()->init(_self->d->value);
 }

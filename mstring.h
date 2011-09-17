@@ -35,6 +35,8 @@ public:
     int size() const;
     int length() const;
 
+    virtual mref copy() const;
+
     //Operator
     //MString& operator=(MString::MRef string);
     //MString& operator+=(MString::MRef string);

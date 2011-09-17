@@ -57,6 +57,11 @@ bool MObject::MRef::isNull() const
     return data() == 0;
 }
 
+void MObject::MRef::deref()
+{
+    MSharedPtr<MObject>::deref();
+}
+
 // end of MObject::MRef
 
 std::ostream& operator<<(std::ostream &stream, MObject::MRef o)
@@ -135,4 +140,9 @@ MObject::MRef MObject::toString() const
     delete[] stringRep;
 
     return string;
+}
+
+MObject::MRef MObject::copy() const
+{
+    return MObject::MRef();
 }
