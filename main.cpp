@@ -55,9 +55,5 @@ private:
 
 int main(int argc, char **argv)
 {
-    MNumber::MRef n = MNumber::alloc()->init(5788939);
-
-    std::cout << n->longLongValue() << std::endl;
-
-    std::cout << n << std::endl;
+    std::cout << MString::alloc()->init("Antonio e ale") << std::endl;
 }

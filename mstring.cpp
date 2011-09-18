@@ -6,35 +6,84 @@
 
 #include "mstring.h"
 
+#define _m_min_stacked_str_size 256
+
 class MString::Private
 {
 public:
     Private(MString *m):
         m(m),
-        str(0)
-    {}
+        str(0),
+        heapedStr(0)
+    {
+        stackedStr[0] = '\0';
+    }
 
     Private(const Private &copy) :
         m(copy.m)
     {
-        str = new char[strlen(copy.str)];
-        strcpy((char*)str, copy.str);
+
     }
 
     ~Private()
     {
-        delete[] str;
+        clear();
     }
 
     void clear()
     {
-        delete[] str;
-        str = 0;
+        stackedStr[0] = '\0';
+        if (heapedStr) {
+            free(heapedStr);
+            heapedStr = 0;
+        }
+        str = stackedStr;
+    }
+
+    void store(const char *string, int length = 0)
+    {
+        const int size = (length == 0) ? strlen(string) : length;
+        if (size < _m_min_stacked_str_size) {
+            memcpy(stackedStr, string, size);
+            str = stackedStr;
+
+            if (heapedStr) {
+                free(heapedStr);
+                heapedStr = 0;
+            }
+            return;
+        }
+
+        if (!heapedStr) {
+            heapedStr = new char[size];
+            str = heapedStr;
+            stackedStr[0] = '\0';
+            return;
+        }
+
+        if (strlen(heapedStr) < size) {
+            heapedStr = (char*)realloc(heapedStr, sizeof(char) * size);
+            memcpy(heapedStr, string, sizeof(char) * size);
+            return;
+        }
+
+        // TODO: if heapedStr was far bigger than str we should
+        // reduce size
+        if (strlen(heapedStr) > size) {
+            memcpy(heapedStr, string, sizeof(char) * size);
+        }
+
     }
 
     MString *m;
-    const char * str;
 
+    char stackedStr[_m_min_stacked_str_size];
+    char *heapedStr;
+
+    // pointer to either the
+    // stack-allocated or
+    // the heap-allocated one
+    const char *str;
 };
 
 const char* MString::data() const 
@@ -64,16 +113,14 @@ MString::MRef MString::init()
 MString::MRef MString::init(const char *cstring)
 {
     init();
-    d->str = new char[strlen(cstring)];
-    strcpy((char*) d->str, cstring);
+    d->store(cstring);
     return _self;
 }
 
 MString::MRef MString::init(const char *buffer, int size)
 {
     init();
-    d->str = new char[size];
-    memcpy((void*)d->str, buffer, size);
+    d->store(buffer, size);
     return _self;
 }
 
@@ -83,6 +130,9 @@ MString::MRef MString::init(MString::MRef copy)
     return _self;
 }
 
+/*MString::MRef MString::init(const char *format...)
+{}
+*/
 void MString::print(std::ostream& os) const
 {
     os << d->str;
@@ -96,7 +146,8 @@ int MString::size() const {
   Returns the length of this string
   @returns the length of the sequence of characters represented by this object.
   */
-int MString::length() const {
+int MString::length() const
+{
     return strlen(d->str);
 }
 
@@ -308,10 +359,7 @@ bool MString::endsWith(MString::MRef val) const
 */
 bool MString::isEmpty() const
 {
-    if (d->str == 0 || strlen(d->str) == 0) {
-        return true;
-    }
-    return false;
+    return d->str[0] == '\0';
 }
 
 /**
@@ -389,4 +437,9 @@ void MString::clear()
 MObject::MRef MString::toString() const
 {
     return _self;
+}
+
+MString::MRef $(const char *a)
+{
+    return MString::alloc()->init(a);
 }

@@ -12,6 +12,7 @@
 #include <string>
 #include <iostream>
 #include <ostream>
+#include <cstdarg>
 
 #include "mshareddataptr.h"
 
@@ -29,6 +30,7 @@ public:
     MString::MRef init(const char*);
     MString::MRef init(const char *buffer, int size);
     MString::MRef init(MString::MRef copy);
+    //MString::MRef init(const char* format, ...);
 
     void print( std::ostream& os ) const;
     void clear();
@@ -67,5 +69,6 @@ private:
 
 std::ostream& operator<<( std::ostream&, MString::MRef);
 
+MString::MRef $(const char *a);
 
 #endif

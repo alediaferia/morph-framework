@@ -195,4 +195,8 @@ bool MURL::isValid() const
 }
 
 mref MURL::toString() const
-{}
+{
+    if (!isValid()) {
+        return $("");
+    }
+}
