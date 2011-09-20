@@ -91,10 +91,6 @@ const char* MString::data() const
     return d->str;
 }
 
-MString::MString(const MString &copy) : MObject()
-{
-}
-
 MString::MString() : MObject()
 {
 }
@@ -130,9 +126,11 @@ MString::MRef MString::init(MString::MRef copy)
     return _self;
 }
 
-/*MString::MRef MString::init(const char *format...)
-{}
-*/
+/*MString::MRef MString::init(const char *format, ...)
+{
+
+}*/
+
 void MString::print(std::ostream& os) const
 {
     os << d->str;

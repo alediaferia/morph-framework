@@ -195,7 +195,7 @@ mref MNumber::toString() const
         digitCount++;
     }
 
-    // not working: cast by correct type
+    // NOTE not working: cast by correct type
     char *str = new char[digitCount + 1];
     sprintf(str, "%d", d->value);
     MString::MRef string = MString::alloc()->init(str);

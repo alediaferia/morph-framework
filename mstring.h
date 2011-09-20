@@ -22,7 +22,6 @@ class MString : public MObject
 {
     M_OBJECT(MString)
 public:
-    MString(const MString &);
     MString();
     ~MString();
 

@@ -21,6 +21,8 @@ public:
     ~MList();
     //MList &operator=( const MList &right );
 
+    MList::MRef init();
+
     mref& operator[](int index);
     void insert(int index, mref item );
     void append(mref item);

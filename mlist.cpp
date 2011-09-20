@@ -194,6 +194,11 @@ MList::~MList()
     delete d;
 }
 
+MList::MRef MList::init()
+{
+    return _self;
+}
+
 void MList::removeAll(mref ele){
     MListNode *ptr;
     ptr=d->head;
