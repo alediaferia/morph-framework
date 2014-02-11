@@ -5,13 +5,13 @@
     public: \
     MProperty<type> name;
 
-#define M_SYNTHETIZE_PROPERTY(p) p()
+#define M_SYNTHESIZE_PROPERTY(p) p()
 
 #define M_COMPLEX_PROPERTY(type, name, _class) \
     public: \
     MPropertyCSG<type, _class> name;
 
-#define M_SYNTHETIZE_COMPLEX_PROPERTY(name, _setter, _getter, _class) \
+#define M_SYNTHESIZE_COMPLEX_PROPERTY(name, _setter, _getter, _class) \
     name(&_class::_setter,&_class::_getter, this)
 
 #define M_OBJECT(_name) \

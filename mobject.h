@@ -1,10 +1,10 @@
 #ifndef MOBJECT_H
 #define MOBJECT_H
 
-#include "mproperty_p.h"
 #include "msharedptr.h"
 #include "mobject_macros.h"
 #include "mobject_p.h"
+
 
 class PropertyContainer;
 class MInvokableMethod;
@@ -111,5 +111,6 @@ std::ostream& operator<<(std::ostream&, MObject::MRef);
 
 #include "minvokablemethod.h"
 #include "morph_defines.h"
+#include "mproperty_p.h"
 
 #endif

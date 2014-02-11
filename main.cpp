@@ -1,59 +1,45 @@
 #include "mstring.h"
-#include "mlist.h"
-#include "meventloop.h"
-#include "mserversocket.h"
 #include "mnumber.h"
+#include "mfile.h"
 
-class ConnectionController : public MObject
+class Button : public MObject
 {
-    M_OBJECT(ConnectionController)
+    M_OBJECT(Button)
 public:
-    ConnectionController()
+    Button() : MObject(),
+    M_SYNTHESIZE_PROPERTY(toggled)
     {
-        registerInvokable(M_INVOKABLE1(ConnectionController, clientConnected));
-        registerInvokable(M_INVOKABLE1(ConnectionController, readyRead));
+        registerInvokable(M_INVOKABLE0(Button, click));
     }
 
-    M_INVOKABLE void clientConnected(mref clientSocket)
+    ~Button()
     {
-        m_socketRef = clientSocket;
-        m_socketRef->addReadyReadListener(_self);
-        m_socketRef->waitForReadyRead(false);
-        std::cout << "waiting for bytes ready" << std::endl;
+        std::cout << "Button dying" << std::endl;
     }
 
-    M_INVOKABLE void readyRead(mref bytes)
+    M_INVOKABLE void click()
     {
-        std::cout << "ready to read " << ((MNumber::MRef)bytes)->intValue() << std::endl;
+        std::cout << "Clicked" << std::endl;
+
+		_self->toggled = MNumber::alloc()->init((int)1);
     }
 
 private:
-    MSocket::MRef m_socketRef;
+    M_PROPERTY(mref, toggled)
 };
 
-class Test : public MObject
+class PrettierButton : public Button
 {
-    M_OBJECT(Test)
+	M_OBJECT(PrettierButton)
 public:
-    Test() : MObject(),
-        list(MList::alloc())
-    {}
-
-    ~Test()
-    {
-        std::cout << "Test dying" << std::endl;
-    }
-
-    void addSelf()
-    {
-        list->append(_self);
-    }
-
-private:
-    MList::MRef list;
+	PrettierButton() : Button()
+	{
+		
+	} 
 };
 
 int main(int argc, char **argv)
 {
-    std::cout << MString::alloc()->init("Antonio e ale") << std::endl;
+    mref button = Button::alloc();
+    button->invokableByName("click")->invoke();
 }

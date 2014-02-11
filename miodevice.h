@@ -22,7 +22,7 @@ public:
     bool seekable() const;
     int descriptor() const;
 
-    int write(const MString &data);
+	int write(const MString::MRef data);
     MString::MRef read(int size);
 
     bool close();

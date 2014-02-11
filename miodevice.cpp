@@ -23,13 +23,13 @@ int MIODevice::descriptor() const
     return d->fd;
 }
 
-int MIODevice::write(const MString &data)
+int MIODevice::write(const MString::MRef data)
 {
     if (!d->fd) {
         return 0;
     }
 
-    return writePlainData(data.data(), data.size());
+    return writePlainData(data->data(), data->size());
 }
 
 bool MIODevice::seek(off_t offset)
